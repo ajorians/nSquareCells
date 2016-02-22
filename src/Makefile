@@ -20,6 +20,7 @@ all:	prepare
 
 prepare:        
 	cd SquareLib; make; cd ..
+	cd Tests; make; cd ..
 
 %.o: %.cpp
 	$(GCC) $(GCCFLAGS) -c $<
@@ -36,6 +37,7 @@ $(EXE).prg.tns: $(EXE).tns
 
 clean:
 	cd SquareLib; make clean
+	cd Tests; make clean
 	rm -rf lib
 	rm -f *.o *.elf
 	rm -f $(DISTDIR)/$(EXE).tns
