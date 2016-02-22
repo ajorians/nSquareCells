@@ -1,9 +1,9 @@
-GCC = nspire-g++
+GCC = nspire-gcc
 LD = nspire-ld
 GENZEHN = genzehn
 
 GCCFLAGS = -Os -Wall -W -marm -Wno-unused-parameter -I include
-LDFLAGS = -L lib -lndls -lHearts -lHeartsAI -lCards -lArchive
+LDFLAGS = -L lib -lndls -lSquare
 OBJCOPY := "$(shell which arm-elf-objcopy 2>/dev/null)"
 ifeq (${OBJCOPY},"")
 	OBJCOPY := arm-none-eabi-objcopy
@@ -11,18 +11,17 @@ endif
 EXE = nSquareCells-gc
 DISTDIR = ..
 
-OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
 vpath %.tns $(DISTDIR)
 vpath %.elf $(DISTDIR)
 
-all:	prepare 
-#$(EXE).prg.tns
+all:	prepare $(EXE).prg.tns
 
 prepare:        
 	cd SquareLib; make; cd ..
 	cd Tests; make; cd ..
 
-%.o: %.cpp
+%.o: %.c
 	$(GCC) $(GCCFLAGS) -c $<
 
 $(EXE).elf: $(OBJS)
