@@ -1,12 +1,49 @@
 #include <os.h>
 #include <libndls.h>
 #include <ngc.h>
-#include <SquareLib/SquareLib.h>
+#include "Startup.h"
+#include "MainMenu.h"
+#include "Game.h"
 
 #define LEVEL_33 "SquareCells 1 4 4 0 2 1 2 0 1 1 1 0 0 1 0 1 0 1 0 2 0 1 0 3 0 1 0 1 1 1 0 2 2 1 0 1 3 1 0 3 3 1 0 \"\""
 
-int main()
+int main(int argc, char *argv[])
 {
+   if( argc != 2 ) {
+      if( !config_file_already_written() ) {
+         write_config_file();
+      }
+   }
+
+   int nLevelNumber = -1;
+   char strLevelData[2048];
+   while(1) {
+      int bShowHelp = 0, bShowOptions = 0;
+      if( argc != 2 ) {
+         struct MainMenu* pMenu = NULL;
+         CreateMainMenu(&pMenu);
+         while(MainMenuLoop(pMenu)){}
+         FreeMainMenu(&pMenu);
+      }
+      else {
+      }
+
+      if( bShowOptions ) {
+         continue;
+      }
+      else if( bShowHelp ) {
+         continue;
+      }
+      else {
+         struct Game* pGame = NULL;
+         CreateGame(&pGame);
+         while(GameLoop(pGame)){}
+         FreeGame(pGame);
+      }
+      break;
+   }
+
+/*
    SquareLib api;
    int x = 0;
    Gc gc = gui_gc_global_GC();
@@ -39,6 +76,6 @@ int main()
       return 1;
 
    wait_key_pressed();
-
+*/
    return 0;
 }
