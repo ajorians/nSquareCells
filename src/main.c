@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
       }
       else {
          struct Game* pGame = NULL;
-         CreateGame(&pGame);
+         CreateGame(&pGame, LEVEL_33);
          while(GameLoop(pGame)){}
          FreeGame(pGame);
       }

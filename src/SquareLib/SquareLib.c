@@ -511,6 +511,74 @@ int NumberOfBombsInRow(struct SquareCells* pS, int nIndex)
    return nCount;
 }*/
 
+int GetNumSquareIndicatorsForRow(SquareLib api, int nIndex)
+{
+   struct SquareCells* pS;
+   enum IndicatorType eType;
+   int nCount = 0;
+   int i = 0;
+   int x;
+   DEBUG_FUNC_NAME;
+
+   pS = (struct SquareCells*)api;
+   if( nIndex < 0 || nIndex >= pS->m_pBoard->m_nHeight )
+      return -1;
+
+   eType = *(pS->m_pBoard->m_pLeft + nIndex);
+   if( eType == NoNumber ) {
+      return 0;
+   }
+
+   for(x=0; x<pS->m_pBoard->m_nWidth; x++) {
+      struct Cell* pCell = GetAt(pS->m_pBoard, x, nIndex);
+      if( pCell->m_bIsBomb )
+         nCount++;
+
+      if( !pCell->m_bIsBomb && eType == Sequential && nCount > 0 ) {
+         i++;
+         nCount = 0;
+      }
+   }
+
+   if( nCount > 0 )
+      i++;
+
+   return i;
+}
+int GetNumSquareIndicatorsForCol(SquareLib api, int nIndex)
+{
+   struct SquareCells* pS;
+   enum IndicatorType eType;
+   int nCount = 0;
+   int i = 0;
+   int y;
+   DEBUG_FUNC_NAME;
+
+   pS = (struct SquareCells*)api;
+   if( nIndex < 0 || nIndex >= pS->m_pBoard->m_nWidth )
+      return -1;
+
+   eType = *(pS->m_pBoard->m_pTop + nIndex);
+   if( eType == NoNumber ) {
+      return 0;
+   }
+
+   for(y=0; y<pS->m_pBoard->m_nHeight; y++) {
+      struct Cell* pCell = GetAt(pS->m_pBoard, nIndex, y);
+      if( pCell->m_bIsBomb )
+         nCount++;
+
+      if( !pCell->m_bIsBomb && eType == Sequential && nCount > 0 ) {
+         i++;
+         nCount = 0;
+      }
+   }
+
+   if( nCount > 0 )
+      i++;
+   return i;
+}
+
 int GetSquareIndicatorsForRow(SquareLib api, int nIndex, int arr[8])
 {
    struct SquareCells* pS;

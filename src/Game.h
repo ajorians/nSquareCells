@@ -6,9 +6,10 @@
 struct Game
 {
    SquareLib m_Square;
+   int m_nSelectionX, m_nSelectionY;
 };
 
-void CreateGame(struct Game** ppGame);
+void CreateGame(struct Game** ppGame, const char* pstrLevelData);
 void FreeGame(struct Game** ppGame);
 int GameLoop(struct Game* pGame);
 //int GameShouldQuit(struct Game* pMenu);

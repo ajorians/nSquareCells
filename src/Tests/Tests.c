@@ -186,6 +186,39 @@ int TestGameOver()
    return TEST_SUCCEEDED;
 }
 
+int TestIndicatorCount()
+{
+   SquareLib api;
+   unsigned int i;
+   PRINT_FUNC;
+
+   if( SQUARELIB_OK != SquareLibCreate(&api, LEVEL_33) )
+      return TEST_FAILED;
+
+   int arrColExp[] = { 0, 1, 2, 1 };
+
+   for(i=0; i<sizeof(arrColExp)/sizeof(arrColExp[0]); i++) {
+      if( arrColExp[i] != GetNumSquareIndicatorsForCol(api, i) ) {
+         printf("Col %d, expected: %d; got %d\n", i, arrColExp[i], GetNumSquareIndicatorsForCol(api, i));
+         return TEST_FAILED;
+      }
+   }
+
+   int arrRowExp[] = { 0, 1, 1, 2 };
+
+   for(i=0; i<sizeof(arrRowExp)/sizeof(arrRowExp[0]); i++) {
+      if( arrRowExp[i] != GetNumSquareIndicatorsForRow(api, i) ) {
+         printf("Row %d, expected: %d; got %d\n", i, arrRowExp[i], GetNumSquareIndicatorsForRow(api, i));
+         return TEST_FAILED;
+      }
+   }
+
+   if( SQUARELIB_OK != SquareLibFree(&api) )
+      return TEST_FAILED;
+
+   return TEST_SUCCEEDED;
+}
+
 int TestIndicators()
 {
    SquareLib api;
@@ -228,6 +261,7 @@ typedef int (*testfunc)();
       TestCellsRemaining,
       TestSimpleMarking,
       TestGameOver,
+      TestIndicatorCount,
       TestIndicators
    };
 

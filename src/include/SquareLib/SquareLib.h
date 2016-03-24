@@ -48,6 +48,8 @@ int IsSquareDestroyed(SquareLib api, int nX, int nY, int* pDestroyed);
 int GetSquaresRemaining(SquareLib api);
 int IsSquareGameOver(SquareLib api);
 int IsSquareNumberMet(SquareLib api, int nX, int nY);
+int GetNumSquareIndicatorsForRow(SquareLib api, int nIndex);
+int GetNumSquareIndicatorsForCol(SquareLib api, int nIndex);
 int GetSquareIndicatorsForRow(SquareLib api, int nIndex, int arr[8]);
 int GetSquareIndicatorsForCol(SquareLib api, int nIndex, int arr[8]);
 
