@@ -172,7 +172,7 @@ int SquareLibCreate(SquareLib* api, const char* pstrFile)
                return SQUARELIB_OUT_OF_MEMORY;
             }
 
-            pS->m_pBoard->m_pLeft = malloc(nWidth*sizeof(enum IndicatorType));
+            pS->m_pBoard->m_pLeft = malloc(nHeight*sizeof(enum IndicatorType));
             if( pS->m_pBoard->m_pLeft == NULL ) {//Out of memory
                Cleanup(&pS);
                return SQUARELIB_OUT_OF_MEMORY;
@@ -657,9 +657,35 @@ int GetSquareIndicatorsForCol(SquareLib api, int nIndex, int arr[8])
    return i;
 }
 
+int GetSquareIndicatorTypeRow(SquareLib api, int nIndex, enum IndicatorType* pIndicator)
+{
+   struct SquareCells* pS;
+   DEBUG_FUNC_NAME;
 
+   pS = (struct SquareCells*)api;
+   if( nIndex < 0 || nIndex >= pS->m_pBoard->m_nHeight )
+      return SQUARELIB_BADARGUMENT;
 
+   if( pIndicator != NULL )
+      *pIndicator = *(pS->m_pBoard->m_pLeft + nIndex);
 
+   return SQUARELIB_OK;
+}
+
+int GetSquareIndicatorTypeCol(SquareLib api, int nIndex, enum IndicatorType* pIndicator)
+{
+   struct SquareCells* pS;
+   DEBUG_FUNC_NAME;
+
+   pS = (struct SquareCells*)api;
+   if( nIndex < 0 || nIndex >= pS->m_pBoard->m_nWidth )
+      return SQUARELIB_BADARGUMENT;
+
+   if( pIndicator != NULL )
+      *pIndicator = *(pS->m_pBoard->m_pTop + nIndex);
+
+   return SQUARELIB_OK;
+}
 
 
 

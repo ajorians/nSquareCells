@@ -9,6 +9,7 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData)
    struct Game* pGame = *ppGame;
    SquareLibCreate(&(pGame->m_Square), pstrLevelData);
    pGame->m_nSelectionX = pGame->m_nSelectionY = 0;
+   pGame->m_bShouldQuit = 0;
 }
 
 void FreeGame(struct Game** ppGame)
@@ -25,8 +26,6 @@ void DrawBoard(struct Game* pGame)
 
    gui_gc_setColorRGB(gc, 0, 250, 250);
    gui_gc_fillRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-   gui_gc_setColorRGB(gc, 0, 0, 0);
 
    int nWidth = GetSquareWidth(pGame->m_Square);
    int nHeight = GetSquareHeight(pGame->m_Square);
@@ -59,6 +58,8 @@ void DrawBoard(struct Game* pGame)
    int nTopBoard = nTop + nMaxRowIndicators*nPieceDim;
 
    //Draw outlines
+#if 0
+   gui_gc_setColorRGB(gc, 0, 0, 0);
    for(int x=0; x<=nWidth; x++) {
       gui_gc_drawLine(gc, nLeftBoard + x*nPieceDim, nTopBoard, nLeftBoard + x*nPieceDim, nTopBoard + nHeight*nPieceDim);
    }
@@ -66,15 +67,22 @@ void DrawBoard(struct Game* pGame)
    for(int y=0; y<=nHeight; y++) {
       gui_gc_drawLine(gc, nLeftBoard, nTopBoard + y*nPieceDim, nLeftBoard + nWidth*nPieceDim, nTopBoard + y*nPieceDim);
    }
+#endif
 
    //Draw indicators
+   gui_gc_setColorRGB(gc, 0, 0, 0);
    for(int x=0; x<nWidth; x++) {
       int arr[8] = {0};
       int nIndicators = GetSquareIndicatorsForCol(pGame->m_Square, x, arr);
       int nIndicatorOffset = nMaxColIndicators - nIndicators;
+      enum IndicatorType eType;
+      GetSquareIndicatorTypeCol(pGame->m_Square, x, &eType);
       for(int i=0; i<nIndicators; i++) {
-         char buf[4];
-         sprintf(buf, "%d", arr[i]);
+         char buf[8];
+         if( eType == FullNumbers ) 
+            sprintf(buf, "[%d]", arr[i]);
+         else
+            sprintf(buf, "%d", arr[i]);
          char buffer[16];
          ascii2utf16(buffer, buf, 16);
          int nSpaceDesired = gui_gc_getStringWidth(gc, Regular9, buf, 0, 1);
@@ -86,9 +94,14 @@ void DrawBoard(struct Game* pGame)
       int arr[8] = {0};
       int nIndicators = GetSquareIndicatorsForRow(pGame->m_Square, y, arr);
       int nIndicatorOffset = nMaxRowIndicators - nIndicators;
+      enum IndicatorType eType;
+      GetSquareIndicatorTypeRow(pGame->m_Square, y, &eType);
       for(int i=0; i<nIndicators; i++) {
-         char buf[4];
-         sprintf(buf, "%d", arr[i]);
+         char buf[8];
+         if( eType == FullNumbers )
+            sprintf(buf, "[%d]", arr[i]);
+         else
+            sprintf(buf, "%d", arr[i]);
          char buffer[16];
          ascii2utf16(buffer, buf, 16);
          int nSpaceDesired = gui_gc_getStringHeight(gc, Regular9, buf, 0, 1);
@@ -104,16 +117,26 @@ void DrawBoard(struct Game* pGame)
 
          int nDestroyed = 0, nMarked = 0;
          IsSquareDestroyed(pGame->m_Square, x, y, &nDestroyed);
-         if( nDestroyed == SQUARELIB_DESTROYED )
+         if( nDestroyed == SQUARELIB_DESTROYED ) {
+            int nSqSize = nPieceDim / 2;
+            gui_gc_setColorRGB(gc, 127, 127, 127);
+            gui_gc_fillRect(gc, nPieceX + nSqSize/2, nPieceY + nSqSize/2, nSqSize, nSqSize);
             continue;
+         }
 
-         gui_gc_setColorRGB(gc, 0, 255, 0);
-         gui_gc_fillRect(gc, nPieceX + 2, nPieceY + 2, nPieceDim-4, nPieceDim-4);
+         gui_gc_setColorRGB(gc, 255, 255, 255);
+         gui_gc_drawRect(gc, nPieceX + 1, nPieceY + 1, nPieceDim-2, nPieceDim-2);
+
+         gui_gc_setColorRGB(gc, 0, 220, 0);
+         gui_gc_fillRect(gc, nPieceX + 2, nPieceY + 2, nPieceDim-3, nPieceDim-3);
 
          IsSquareMarked(pGame->m_Square, x, y, &nMarked);
          if( nMarked == SQUARELIB_MARKED ) {
+            gui_gc_setColorRGB(gc, 0, 175, 0);
+            gui_gc_fillRect(gc, nPieceX + 2, nPieceY + nPieceDim/2 + 2, nPieceDim-3, nPieceDim/2-3);
+
             gui_gc_setColorRGB(gc, 255, 255, 255);
-            gui_gc_fillRect(gc, nPieceX + nPieceDim - 8, nPieceY + 2, 4, 4);
+            gui_gc_fillRect(gc, nPieceX + nPieceDim - 12, nPieceY + 4, 6, 6);
          }
       }
    }
@@ -153,8 +176,10 @@ int GameLoop(struct Game* pGame)
    DrawBoard(pGame);
 
    int nDestroyed = 0;
-   if( IsKeyPressed(KEY_NSPIRE_ESC) )
+   if( IsKeyPressed(KEY_NSPIRE_ESC) ) {
+      pGame->m_bShouldQuit = 0;//Could change to completly close program
       return 0;
+   }
    else if( IsKeyPressed(KEY_NSPIRE_LEFT) && pGame->m_nSelectionX > 0 )
       pGame->m_nSelectionX--;
    else if( IsKeyPressed(KEY_NSPIRE_RIGHT) && pGame->m_nSelectionX < (GetSquareWidth(pGame->m_Square)-1) )
@@ -173,12 +198,15 @@ int GameLoop(struct Game* pGame)
       if( nDestroyed == SQUARELIB_NOT_DESTROYED )
          ToggleSquareMark(pGame->m_Square, pGame->m_nSelectionX, pGame->m_nSelectionY);
    }
+
+   if( IsSquareGameOver(pGame->m_Square) == SQUARELIB_GAMEOVER )
+      return 0;
    
    return 1;
 }
 
-/*int MainMenuShouldQuit(struct MainMenu* pMenu)
+int GameShouldQuit(struct Game* pGame)
 {
-   return 1;
-}*/
+   return pGame->m_bShouldQuit;
+}
 

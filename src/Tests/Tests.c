@@ -30,6 +30,10 @@ int g_nRelocatedGlobals = 0;
 #endif
 #endif
 
+//SquareCells VerNum Width Height
+//Across top type for each column
+//Across left type for each row
+//x y IsBomb IsDestroyed
 #define LEVEL_33 "SquareCells 1 4 4 0 2 1 2 0 1 1 1 0 0 1 0 1 0 1 0 2 0 1 0 3 0 1 0 1 1 1 0 2 2 1 0 1 3 1 0 3 3 1 0 \"\""
 
 int TestConstruction()
@@ -253,6 +257,41 @@ int TestIndicators()
    return TEST_SUCCEEDED;
 }
 
+int TestIndicatorsTypes()
+{
+   SquareLib api;
+   unsigned int i;
+   PRINT_FUNC;
+
+   if( SQUARELIB_OK != SquareLibCreate(&api, LEVEL_33) )
+      return TEST_FAILED;
+
+   enum IndicatorType arrColTypes[] = { NoNumber, FullNumbers, Sequential, FullNumbers };
+
+   for(i=0; i<sizeof(arrColTypes)/sizeof(arrColTypes[0]); i++) {
+      enum IndicatorType eType;
+      if( GetSquareIndicatorTypeRow(api, i, &eType) != SQUARELIB_OK ) {
+         printf("Col %d, expected: %d; got %d\n", i, arrColTypes[i], eType);
+         return TEST_FAILED;
+      }
+   }
+
+   enum IndicatorType arrRowTypes[] = { NoNumber, Sequential, Sequential, Sequential };
+
+   for(i=0; i<sizeof(arrRowTypes)/sizeof(arrRowTypes[0]); i++) {
+      enum IndicatorType eType;
+      if( GetSquareIndicatorTypeCol(api, i, &eType) != SQUARELIB_OK ) {
+         printf("Row %d, expected: %d; got %d\n", i, arrRowTypes[i], eType);
+         return TEST_FAILED;
+      }
+   }
+
+   if( SQUARELIB_OK != SquareLibFree(&api) )
+      return TEST_FAILED;
+
+   return TEST_SUCCEEDED;
+}
+
 typedef int (*testfunc)();
    testfunc g_Tests[] =
    {
@@ -262,7 +301,8 @@ typedef int (*testfunc)();
       TestSimpleMarking,
       TestGameOver,
       TestIndicatorCount,
-      TestIndicators
+      TestIndicators,
+      TestIndicatorsTypes
    };
 
 void RunTests()

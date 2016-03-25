@@ -52,5 +52,7 @@ int GetNumSquareIndicatorsForRow(SquareLib api, int nIndex);
 int GetNumSquareIndicatorsForCol(SquareLib api, int nIndex);
 int GetSquareIndicatorsForRow(SquareLib api, int nIndex, int arr[8]);
 int GetSquareIndicatorsForCol(SquareLib api, int nIndex, int arr[8]);
+int GetSquareIndicatorTypeRow(SquareLib api, int nIndex, enum IndicatorType* pIndicator);
+int GetSquareIndicatorTypeCol(SquareLib api, int nIndex, enum IndicatorType* pIndicator);
 
 #endif

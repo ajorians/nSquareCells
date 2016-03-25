@@ -48,8 +48,10 @@ int MainMenuLoop(struct MainMenu* pMenu)
    gui_gc_blit_to_screen(gc);
    gui_gc_finish(gc);
 
-   if( isKeyPressed(KEY_NSPIRE_ESC) )
+   if( isKeyPressed(KEY_NSPIRE_ESC) ) {
+      pMenu->m_eChoice = Quit;
       return 0;
+   }
    if( isKeyPressed(KEY_NSPIRE_UP) && pMenu->m_eChoice == Options )
       pMenu->m_eChoice = Play;
    else if( isKeyPressed(KEY_NSPIRE_DOWN) && pMenu->m_eChoice == Play )
@@ -62,6 +64,6 @@ int MainMenuLoop(struct MainMenu* pMenu)
 
 int MainMenuShouldQuit(struct MainMenu* pMenu)
 {
-   return 1;
+   return pMenu->m_eChoice == Quit;
 }
 
