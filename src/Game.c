@@ -2,19 +2,55 @@
 #include <libndls.h>
 #include <ngc.h>
 #include "Game.h"
+#include "Metrics.h"
+#include "Piece.h"
+#include "Selector.h"
 
 void CreateGame(struct Game** ppGame, const char* pstrLevelData)
 {
    *ppGame = malloc(sizeof(struct Game));
    struct Game* pGame = *ppGame;
    SquareLibCreate(&(pGame->m_Square), pstrLevelData);
-   pGame->m_nSelectionX = pGame->m_nSelectionY = 0;
+
+   pGame->m_pMetrics = NULL;
+   CreateMetrics(&pGame->m_pMetrics, pGame->m_Square);
+
+   int nWidth = GetSquareWidth(pGame->m_Square);
+   int nHeight = GetSquareHeight(pGame->m_Square);
+   int nNumPtrs = nWidth * nHeight;
+   pGame->m_apPieces = malloc(nNumPtrs*sizeof(struct Piece));
+   for(int x=0; x<nWidth; x++) {
+      for(int y=0; y<nHeight; y++) {
+         struct Piece* pPiece = &pGame->m_apPieces[x+y*nWidth];
+         CreatePiece(pPiece, x, y, pGame->m_Square, pGame->m_pMetrics);
+      }
+   }
+
+   pGame->m_pSelector = NULL;
+   CreateSelector(&pGame->m_pSelector, pGame->m_Square, pGame->m_pMetrics);
+
    pGame->m_bShouldQuit = 0;
 }
 
 void FreeGame(struct Game** ppGame)
 {
-   free(*ppGame);
+   struct Game* pGame = *ppGame;
+   FreeMetrics(&pGame->m_pMetrics);
+   pGame->m_pMetrics = NULL;
+
+   int nWidth = GetSquareWidth(pGame->m_Square);
+   int nHeight = GetSquareHeight(pGame->m_Square);
+   for(int x=0; x<nWidth; x++) {
+      for(int y=0; y<nHeight; y++) {
+         struct Piece* pPiece = &pGame->m_apPieces[x+y*nWidth];
+         FreePiece(pPiece);
+      }
+   }
+   free(pGame->m_apPieces);
+
+   FreeSelector(&pGame->m_pSelector);
+
+   free(pGame);
    *ppGame = NULL;
 }
 
@@ -30,32 +66,16 @@ void DrawBoard(struct Game* pGame)
    int nWidth = GetSquareWidth(pGame->m_Square);
    int nHeight = GetSquareHeight(pGame->m_Square);
 
-   int nMaxColIndicators = 0;
-   for(int x=0; x<nWidth; x++) {
-      int nIndicators = GetNumSquareIndicatorsForCol(pGame->m_Square, x);
-      if( nIndicators > nMaxColIndicators )
-         nMaxColIndicators = nIndicators;
-   }
+   int nMaxColIndicators = MetricsGetMaxColIndicators(pGame->m_pMetrics);
+   int nMaxRowIndicators = MetricsGetMaxRowIndicators(pGame->m_pMetrics);
 
-   int nMaxRowIndicators = 0;
-   for(int y=0; y<nHeight; y++) {
-      int nIndicators = GetNumSquareIndicatorsForRow(pGame->m_Square, y);
-      if( nIndicators > nMaxRowIndicators )
-         nMaxRowIndicators = nIndicators;
-   }
+   int nPieceDim = MetricsGetPieceDim(pGame->m_pMetrics);
 
-   int nSpotsNeededHorizontally = nWidth + nMaxRowIndicators;
-   int nSpotsNeededVertically = nHeight + nMaxColIndicators;
+   int nLeft = MetricsGetLeft(pGame->m_pMetrics);
+   int nTop = MetricsGetTop(pGame->m_pMetrics);
 
-   int nPieceWidth = SCREEN_WIDTH / nSpotsNeededHorizontally;
-   int nPieceHeight = SCREEN_HEIGHT / nSpotsNeededVertically;
-   int nPieceDim = nPieceWidth < nPieceHeight ? nPieceWidth : nPieceHeight;
-
-   int nLeft = (SCREEN_WIDTH - (nPieceDim * nSpotsNeededHorizontally))/2;
-   int nTop = (SCREEN_HEIGHT - (nPieceDim * nSpotsNeededVertically))/2;
-
-   int nLeftBoard = nLeft + nMaxColIndicators*nPieceDim;
-   int nTopBoard = nTop + nMaxRowIndicators*nPieceDim;
+   int nLeftBoard = MetricsGetLeftBoard(pGame->m_pMetrics);
+   int nTopBoard = MetricsGetTopBoard(pGame->m_pMetrics);
 
    //Draw outlines
 #if 0
@@ -112,43 +132,13 @@ void DrawBoard(struct Game* pGame)
    //Draw pieces
    for(int x=0; x<nWidth; x++) {
       for(int y=0; y<nHeight; y++) {
-         int nPieceX = nLeftBoard + x*nPieceDim,
-             nPieceY = nTopBoard + y*nPieceDim;
-
-         int nDestroyed = 0, nMarked = 0;
-         IsSquareDestroyed(pGame->m_Square, x, y, &nDestroyed);
-         if( nDestroyed == SQUARELIB_DESTROYED ) {
-            int nSqSize = nPieceDim / 2;
-            gui_gc_setColorRGB(gc, 127, 127, 127);
-            gui_gc_fillRect(gc, nPieceX + nSqSize/2, nPieceY + nSqSize/2, nSqSize, nSqSize);
-            continue;
-         }
-
-         gui_gc_setColorRGB(gc, 255, 255, 255);
-         gui_gc_drawRect(gc, nPieceX + 1, nPieceY + 1, nPieceDim-2, nPieceDim-2);
-
-         gui_gc_setColorRGB(gc, 0, 220, 0);
-         gui_gc_fillRect(gc, nPieceX + 2, nPieceY + 2, nPieceDim-3, nPieceDim-3);
-
-         IsSquareMarked(pGame->m_Square, x, y, &nMarked);
-         if( nMarked == SQUARELIB_MARKED ) {
-            gui_gc_setColorRGB(gc, 0, 175, 0);
-            gui_gc_fillRect(gc, nPieceX + 2, nPieceY + nPieceDim/2 + 2, nPieceDim-3, nPieceDim/2-3);
-
-            gui_gc_setColorRGB(gc, 255, 255, 255);
-            gui_gc_fillRect(gc, nPieceX + nPieceDim - 12, nPieceY + 4, 6, 6);
-         }
+         struct Piece* pPiece = &pGame->m_apPieces[x+y*nWidth];
+         PieceDraw(pPiece, &gc);
       }
    }
 
    //Draw selector
-   gui_gc_setColorRGB(gc, 255, 0, 0);
-   int nSelectionX = nLeftBoard + pGame->m_nSelectionX * nPieceDim,
-       nSelectionY = nTopBoard + pGame->m_nSelectionY * nPieceDim;
-   gui_gc_drawLine(gc, nSelectionX, nSelectionY, nSelectionX + nPieceDim, nSelectionY);
-   gui_gc_drawLine(gc, nSelectionX, nSelectionY, nSelectionX, nSelectionY + nPieceDim);
-   gui_gc_drawLine(gc, nSelectionX + nPieceDim, nSelectionY, nSelectionX + nPieceDim, nSelectionY + nPieceDim);
-   gui_gc_drawLine(gc, nSelectionX, nSelectionY + nPieceDim, nSelectionX + nPieceDim, nSelectionY + nPieceDim);
+   SelectorDraw(pGame->m_pSelector, &gc);
 
    //Draw remaining
    char buffer[32];
@@ -175,28 +165,30 @@ int GameLoop(struct Game* pGame)
 {
    DrawBoard(pGame);
 
+   int nSelectionX = pGame->m_pSelector->m_nSelectionX;
+   int nSelectionY = pGame->m_pSelector->m_nSelectionY;
    int nDestroyed = 0;
    if( IsKeyPressed(KEY_NSPIRE_ESC) ) {
       pGame->m_bShouldQuit = 0;//Could change to completly close program
       return 0;
    }
-   else if( IsKeyPressed(KEY_NSPIRE_LEFT) && pGame->m_nSelectionX > 0 )
-      pGame->m_nSelectionX--;
-   else if( IsKeyPressed(KEY_NSPIRE_RIGHT) && pGame->m_nSelectionX < (GetSquareWidth(pGame->m_Square)-1) )
-      pGame->m_nSelectionX++;
-   else if( IsKeyPressed(KEY_NSPIRE_UP) && pGame->m_nSelectionY > 0 )
-      pGame->m_nSelectionY--;
-   else if( IsKeyPressed(KEY_NSPIRE_DOWN) && pGame->m_nSelectionY < (GetSquareHeight(pGame->m_Square)-1) )
-      pGame->m_nSelectionY++;
+   else if( IsKeyPressed(KEY_NSPIRE_LEFT) )
+      SelectorMove(pGame->m_pSelector, Sel_Left);
+   else if( IsKeyPressed(KEY_NSPIRE_RIGHT) )
+      SelectorMove(pGame->m_pSelector, Sel_Right);
+   else if( IsKeyPressed(KEY_NSPIRE_UP) )
+      SelectorMove(pGame->m_pSelector, Sel_Up);
+   else if( IsKeyPressed(KEY_NSPIRE_DOWN) )
+      SelectorMove(pGame->m_pSelector, Sel_Down);
    else if( IsKeyPressed(KEY_NSPIRE_CTRL) ) {
-      IsSquareDestroyed(pGame->m_Square, pGame->m_nSelectionX, pGame->m_nSelectionY, &nDestroyed);
+      IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
       if( nDestroyed == SQUARELIB_NOT_DESTROYED )
-         DestroySquare(pGame->m_Square, pGame->m_nSelectionX, pGame->m_nSelectionY);
+         DestroySquare(pGame->m_Square, nSelectionX, nSelectionY);
    }
    else if( IsKeyPressed(KEY_NSPIRE_SHIFT) ) {
-      IsSquareDestroyed(pGame->m_Square, pGame->m_nSelectionX, pGame->m_nSelectionY, &nDestroyed);
+      IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
       if( nDestroyed == SQUARELIB_NOT_DESTROYED )
-         ToggleSquareMark(pGame->m_Square, pGame->m_nSelectionX, pGame->m_nSelectionY);
+         ToggleSquareMark(pGame->m_Square, nSelectionX, nSelectionY);
    }
 
    if( IsSquareGameOver(pGame->m_Square) == SQUARELIB_GAMEOVER )

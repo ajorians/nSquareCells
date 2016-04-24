@@ -3,10 +3,16 @@
 
 #include <SquareLib/SquareLib.h>
 
+struct Metrics;
+struct Piece;
+struct Selector;
+
 struct Game
 {
    SquareLib m_Square;
-   int m_nSelectionX, m_nSelectionY;
+   struct Metrics* m_pMetrics;
+   struct Piece* m_apPieces;
+   struct Selector* m_pSelector;
    int m_bShouldQuit;
 };
 

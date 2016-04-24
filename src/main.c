@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
          CreateGame(&pGame, LEVEL_33);
          while(GameLoop(pGame)){}
          bShouldQuit = GameShouldQuit(pGame);
-         FreeGame(pGame);
+         FreeGame(&pGame);
 
          if( bShouldQuit )
             break;
