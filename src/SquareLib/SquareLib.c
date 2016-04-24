@@ -610,7 +610,7 @@ int GetSquareIndicatorsForRow(SquareLib api, int nIndex, int arr[8])
          nCount = 0;
       }
    }
-   if( nCount > 0 )
+   if( nCount > 0 || i == 0 )
       arr[i++] = nCount;
 #ifdef DEBUG_DETAILS
    printf("Row %d returning %d\n", nIndex, i);
@@ -649,7 +649,7 @@ int GetSquareIndicatorsForCol(SquareLib api, int nIndex, int arr[8])
          nCount = 0;
       }
    }
-   if( nCount > 0 )
+   if( nCount > 0 || i == 0 )
       arr[i++] = nCount;
 #ifdef DEBUG_DETAILS
    printf("Col %d returning %d\n", nIndex, i);
