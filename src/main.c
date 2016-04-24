@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
       else {
          struct Game* pGame = NULL;
          int bShouldQuit = 0;
-         CreateGame(&pGame, LEVEL_1);
+         CreateGame(&pGame, LEVEL_19);
          while(GameLoop(pGame)){}
          bShouldQuit = GameShouldQuit(pGame);
          FreeGame(&pGame);
