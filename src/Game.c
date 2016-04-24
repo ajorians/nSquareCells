@@ -5,6 +5,7 @@
 #include "Metrics.h"
 #include "Piece.h"
 #include "Selector.h"
+#include "Indicators.h"
 
 void CreateGame(struct Game** ppGame, const char* pstrLevelData)
 {
@@ -29,6 +30,9 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData)
    pGame->m_pSelector = NULL;
    CreateSelector(&pGame->m_pSelector, pGame->m_Square, pGame->m_pMetrics);
 
+   pGame->m_pIndicators = NULL;
+   CreateIndicators(&pGame->m_pIndicators, pGame->m_Square, pGame->m_pMetrics);
+
    pGame->m_bShouldQuit = 0;
 }
 
@@ -49,6 +53,7 @@ void FreeGame(struct Game** ppGame)
    free(pGame->m_apPieces);
 
    FreeSelector(&pGame->m_pSelector);
+   FreeIndicators(&pGame->m_pIndicators);
 
    free(pGame);
    *ppGame = NULL;
@@ -66,17 +71,6 @@ void DrawBoard(struct Game* pGame)
    int nWidth = GetSquareWidth(pGame->m_Square);
    int nHeight = GetSquareHeight(pGame->m_Square);
 
-   int nMaxColIndicators = MetricsGetMaxColIndicators(pGame->m_pMetrics);
-   int nMaxRowIndicators = MetricsGetMaxRowIndicators(pGame->m_pMetrics);
-
-   int nPieceDim = MetricsGetPieceDim(pGame->m_pMetrics);
-
-   int nLeft = MetricsGetLeft(pGame->m_pMetrics);
-   int nTop = MetricsGetTop(pGame->m_pMetrics);
-
-   int nLeftBoard = MetricsGetLeftBoard(pGame->m_pMetrics);
-   int nTopBoard = MetricsGetTopBoard(pGame->m_pMetrics);
-
    //Draw outlines
 #if 0
    gui_gc_setColorRGB(gc, 0, 0, 0);
@@ -90,44 +84,7 @@ void DrawBoard(struct Game* pGame)
 #endif
 
    //Draw indicators
-   gui_gc_setColorRGB(gc, 0, 0, 0);
-   for(int x=0; x<nWidth; x++) {
-      int arr[8] = {0};
-      int nIndicators = GetSquareIndicatorsForCol(pGame->m_Square, x, arr);
-      int nIndicatorOffset = nMaxColIndicators - nIndicators;
-      enum IndicatorType eType;
-      GetSquareIndicatorTypeCol(pGame->m_Square, x, &eType);
-      for(int i=0; i<nIndicators; i++) {
-         char buf[8];
-         if( eType == FullNumbers ) 
-            sprintf(buf, "[%d]", arr[i]);
-         else
-            sprintf(buf, "%d", arr[i]);
-         char buffer[16];
-         ascii2utf16(buffer, buf, 16);
-         int nSpaceDesired = gui_gc_getStringWidth(gc, Regular9, buf, 0, 1);
-         gui_gc_drawString(gc, buffer, nLeftBoard + x*nPieceDim + (nPieceDim-nSpaceDesired)/2, nTop + (i+nIndicatorOffset)*nPieceDim, GC_SM_TOP);
-      }
-   }
-
-   for(int y=0; y<nHeight; y++) {
-      int arr[8] = {0};
-      int nIndicators = GetSquareIndicatorsForRow(pGame->m_Square, y, arr);
-      int nIndicatorOffset = nMaxRowIndicators - nIndicators;
-      enum IndicatorType eType;
-      GetSquareIndicatorTypeRow(pGame->m_Square, y, &eType);
-      for(int i=0; i<nIndicators; i++) {
-         char buf[8];
-         if( eType == FullNumbers )
-            sprintf(buf, "[%d]", arr[i]);
-         else
-            sprintf(buf, "%d", arr[i]);
-         char buffer[16];
-         ascii2utf16(buffer, buf, 16);
-         int nSpaceDesired = gui_gc_getStringHeight(gc, Regular9, buf, 0, 1);
-         gui_gc_drawString(gc, buffer, nLeft + (i+nIndicatorOffset)*nPieceDim, nTopBoard + y*nPieceDim + (nPieceDim-nSpaceDesired)/2, GC_SM_TOP);
-      }
-   }
+   IndicatorsDraw(pGame->m_pIndicators, &gc);
 
    //Draw pieces
    for(int x=0; x<nWidth; x++) {

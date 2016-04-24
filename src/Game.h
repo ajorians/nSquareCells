@@ -6,6 +6,7 @@
 struct Metrics;
 struct Piece;
 struct Selector;
+struct Indicators;
 
 struct Game
 {
@@ -13,6 +14,7 @@ struct Game
    struct Metrics* m_pMetrics;
    struct Piece* m_apPieces;
    struct Selector* m_pSelector;
+   struct Indicators* m_pIndicators;
    int m_bShouldQuit;
 };
 
