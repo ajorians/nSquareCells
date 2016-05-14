@@ -45,7 +45,8 @@ void CreateMetrics(struct Metrics** ppMetrics, SquareLib square, Gc* pgc)
 
    int nHeightPerChar = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
    printf("HeightPerChar: %d\n", nHeightPerChar);
-   int nIndicatorSpaceNeededVertically = pMetrics->m_nMaxColIndicators * nHeightPerChar;
+   const int nIndicatorGapVertically = 3;
+   int nIndicatorSpaceNeededVertically = pMetrics->m_nMaxColIndicators * nHeightPerChar + nIndicatorGapVertically;
    printf("IndicatorSpaceNeededVertically: %d\n", nIndicatorSpaceNeededVertically);
    int nSpaceAvailableVertically = SCREEN_HEIGHT - nGapVertically - nIndicatorSpaceNeededVertically;
    printf("Space available vertically: %d\n", nSpaceAvailableVertically);
@@ -123,5 +124,6 @@ int MetricsGetYForSpot(struct Metrics* pMetrics, int nX, int nY)
 {
    return pMetrics->m_nTopBoard + nY * pMetrics->m_nPieceDim;
 }
+
 
 

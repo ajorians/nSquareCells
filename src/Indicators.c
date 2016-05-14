@@ -85,6 +85,8 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
          const int nHorizontalSpacing = 3;
          int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1) + nHorizontalSpacing;
          int nPosX = nLeft + (i+nIndicatorOffset)*nWidthSpaceDesired;
+         if( eType == FullNumbers )
+            nPosX = nLeftBoard - nWidthSpaceDesired - 2;
          int nPosY = nTopBoard + y*nPieceDim + (nPieceDim-nHeightSpaceDesired)/2;
          gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
       }
