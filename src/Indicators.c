@@ -35,7 +35,9 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
    int nLeftBoard = MetricsGetLeftBoard(pIndicators->m_pMetrics);
    int nTopBoard = MetricsGetTopBoard(pIndicators->m_pMetrics);
 
+   gui_gc_setFont(*pgc, SerifRegular7);
    gui_gc_setColorRGB(*pgc, 0, 0, 0);
+   //Top indicators
    for(int x=0; x<nWidth; x++) {
       int arr[8] = {0};
       int nIndicators = GetSquareIndicatorsForCol(pIndicators->m_Square, x, arr);
@@ -50,11 +52,21 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
             sprintf(buf, "%d", arr[i]);
          char buffer[16];
          ascii2utf16(buffer, buf, 16);
-         int nSpaceDesired = gui_gc_getStringWidth(*pgc, Regular9, buf, 0, 1);
-         gui_gc_drawString(*pgc, buffer, nLeftBoard + x*nPieceDim + (nPieceDim-nSpaceDesired)/2, nTop + (i+nIndicatorOffset)*nPieceDim, GC_SM_TOP);
+         int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
+         int nHeightSpaceDesired = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
+         static int n = 0;
+         if( n == 0 )
+         {
+            printf("nHeightSpaceDesired: %d\n", nHeightSpaceDesired);
+            n++;
+         }
+         int nPosX = nLeftBoard + x*nPieceDim + (nPieceDim-nWidthSpaceDesired)/2;
+         int nPosY = nTop + (i+nIndicatorOffset)*nHeightSpaceDesired;
+         gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
       }
    }
 
+   //Left side indicators
    for(int y=0; y<nHeight; y++) {
       int arr[8] = {0};
       int nIndicators = GetSquareIndicatorsForRow(pIndicators->m_Square, y, arr);
@@ -69,8 +81,12 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
             sprintf(buf, "%d", arr[i]);
          char buffer[16];
          ascii2utf16(buffer, buf, 16);
-         int nSpaceDesired = gui_gc_getStringHeight(*pgc, Regular9, buf, 0, 1);
-         gui_gc_drawString(*pgc, buffer, nLeft + (i+nIndicatorOffset)*nPieceDim, nTopBoard + y*nPieceDim + (nPieceDim-nSpaceDesired)/2, GC_SM_TOP);
+         int nHeightSpaceDesired = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
+         const int nHorizontalSpacing = 3;
+         int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1) + nHorizontalSpacing;
+         int nPosX = nLeft + (i+nIndicatorOffset)*nWidthSpaceDesired;
+         int nPosY = nTopBoard + y*nPieceDim + (nPieceDim-nHeightSpaceDesired)/2;
+         gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
       }
    }
 }

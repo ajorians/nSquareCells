@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <SquareLib/SquareLib.h>
+#include <ngc.h>
 
 struct Metrics;
 struct Piece;
@@ -16,6 +17,7 @@ struct Game
    struct Selector* m_pSelector;
    struct Indicators* m_pIndicators;
    int m_bShouldQuit;
+   Gc m_gc;
 };
 
 void CreateGame(struct Game** ppGame, const char* pstrLevelData);

@@ -13,8 +13,11 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData)
    struct Game* pGame = *ppGame;
    SquareLibCreate(&(pGame->m_Square), pstrLevelData);
 
+   pGame->m_gc = gui_gc_global_GC();
+
+   gui_gc_begin(pGame->m_gc);
    pGame->m_pMetrics = NULL;
-   CreateMetrics(&pGame->m_pMetrics, pGame->m_Square);
+   CreateMetrics(&pGame->m_pMetrics, pGame->m_Square, &pGame->m_gc);
 
    int nWidth = GetSquareWidth(pGame->m_Square);
    int nHeight = GetSquareHeight(pGame->m_Square);
@@ -55,18 +58,16 @@ void FreeGame(struct Game** ppGame)
    FreeSelector(&pGame->m_pSelector);
    FreeIndicators(&pGame->m_pIndicators);
 
+   gui_gc_finish(pGame->m_gc);
+
    free(pGame);
    *ppGame = NULL;
 }
 
 void DrawBoard(struct Game* pGame)
 {
-   Gc gc = gui_gc_global_GC();
-
-   gui_gc_begin(gc);
-
-   gui_gc_setColorRGB(gc, 0, 250, 250);
-   gui_gc_fillRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+   gui_gc_setColorRGB(pGame->m_gc, 0, 250, 250);
+   gui_gc_fillRect(pGame->m_gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
    int nWidth = GetSquareWidth(pGame->m_Square);
    int nHeight = GetSquareHeight(pGame->m_Square);
@@ -84,29 +85,28 @@ void DrawBoard(struct Game* pGame)
 #endif
 
    //Draw indicators
-   IndicatorsDraw(pGame->m_pIndicators, &gc);
+   IndicatorsDraw(pGame->m_pIndicators, &pGame->m_gc);
 
    //Draw pieces
    for(int x=0; x<nWidth; x++) {
       for(int y=0; y<nHeight; y++) {
          struct Piece* pPiece = &pGame->m_apPieces[x+y*nWidth];
-         PieceDraw(pPiece, &gc);
+         PieceDraw(pPiece, &pGame->m_gc);
       }
    }
 
    //Draw selector
-   SelectorDraw(pGame->m_pSelector, &gc);
+   SelectorDraw(pGame->m_pSelector, &pGame->m_gc);
 
    //Draw remaining
    char buffer[32];
    sprintf(buffer, "%d to remove", GetSquaresRemaining(pGame->m_Square));
    char bufferUnicode[32];
    ascii2utf16(bufferUnicode, buffer, 32);
-   gui_gc_setColorRGB(gc, 0, 0, 0);
-   gui_gc_drawString(gc, bufferUnicode, 10, 10, GC_SM_TOP);
+   gui_gc_setColorRGB(pGame->m_gc, 0, 0, 0);
+   gui_gc_drawString(pGame->m_gc, bufferUnicode, 10, 10, GC_SM_TOP);
 
-   gui_gc_blit_to_screen(gc);
-   gui_gc_finish(gc);
+   gui_gc_blit_to_screen(pGame->m_gc);
 }
 
 int IsKeyPressed(const t_key key){

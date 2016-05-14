@@ -1,6 +1,7 @@
 #ifndef METRICS_H
 #define METRICS_H
 
+#include <ngc.h>
 #include <SquareLib/SquareLib.h>
 
 struct Metrics
@@ -15,7 +16,7 @@ struct Metrics
    int m_nTopBoard;
 };
 
-void CreateMetrics(struct Metrics** ppMetrics, SquareLib square);
+void CreateMetrics(struct Metrics** ppMetrics, SquareLib square, Gc* pgc);
 void FreeMetrics(struct Metrics** ppMetrics);
 int MetricsGetPieceDim(struct Metrics* pMetrics);
 int MetricsGetMaxColIndicators(struct Metrics* pMetrics);

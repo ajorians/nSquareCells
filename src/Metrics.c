@@ -3,7 +3,7 @@
 #include <libndls.h>
 #include <ngc.h>
 
-void CreateMetrics(struct Metrics** ppMetrics, SquareLib square)
+void CreateMetrics(struct Metrics** ppMetrics, SquareLib square, Gc* pgc)
 {
    *ppMetrics = malloc(sizeof(struct Metrics));
    struct Metrics* pMetrics = *ppMetrics;
@@ -18,6 +18,7 @@ void CreateMetrics(struct Metrics** ppMetrics, SquareLib square)
       if( nIndicators > pMetrics->m_nMaxColIndicators )
          pMetrics->m_nMaxColIndicators = nIndicators;
    }
+   printf("Max col indicators: %d\n", pMetrics->m_nMaxColIndicators);
 
    pMetrics->m_nMaxRowIndicators = 0;
    for(int y=0; y<nHeight; y++) {
@@ -25,19 +26,44 @@ void CreateMetrics(struct Metrics** ppMetrics, SquareLib square)
       if( nIndicators > pMetrics->m_nMaxRowIndicators )
          pMetrics->m_nMaxRowIndicators = nIndicators;
    }
+   printf("Max row indicators: %d\n", pMetrics->m_nMaxRowIndicators);
 
-   int nSpotsNeededHorizontally = nWidth + pMetrics->m_nMaxRowIndicators;
-   int nSpotsNeededVertically = nHeight + pMetrics->m_nMaxColIndicators;
+   char buffer[16];
+   char buf[8];
+   sprintf(buf, "%d", 8/*Example wide character*/);
+   ascii2utf16(buffer, buf, 16);
 
-   int nPieceWidth = SCREEN_WIDTH / nSpotsNeededHorizontally;
-   int nPieceHeight = SCREEN_HEIGHT / nSpotsNeededVertically;
+   gui_gc_setFont(*pgc, SerifRegular7);
+   const int nHorizontalSpacing = 3;
+   int nWidthPerChar = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1) + nHorizontalSpacing;
+
+   const int nGapHorizontally = 4;
+   const int nGapVertically = 4;
+   int nIndicatorSpaceNeededHorizontally = pMetrics->m_nMaxRowIndicators * nWidthPerChar;
+   int nSpaceAvailableHorizontally = SCREEN_WIDTH - nGapHorizontally - nIndicatorSpaceNeededHorizontally;
+   printf("Space available Horizontall: %d\n", nSpaceAvailableHorizontally);
+
+   int nHeightPerChar = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
+   printf("HeightPerChar: %d\n", nHeightPerChar);
+   int nIndicatorSpaceNeededVertically = pMetrics->m_nMaxColIndicators * nHeightPerChar;
+   printf("IndicatorSpaceNeededVertically: %d\n", nIndicatorSpaceNeededVertically);
+   int nSpaceAvailableVertically = SCREEN_HEIGHT - nGapVertically - nIndicatorSpaceNeededVertically;
+   printf("Space available vertically: %d\n", nSpaceAvailableVertically);
+
+   int nMinSpaceAvailable = nSpaceAvailableHorizontally < nSpaceAvailableVertically ? nSpaceAvailableHorizontally - (nWidth-1) : nSpaceAvailableVertically - (nHeight-1);
+
+   int nPieceWidth = nMinSpaceAvailable / nWidth;
+   int nPieceHeight = nSpaceAvailableVertically / nHeight;
    pMetrics->m_nPieceDim = nPieceWidth < nPieceHeight ? nPieceWidth : nPieceHeight;
+   printf("PieceDim: %d\n", pMetrics->m_nPieceDim);
 
-   pMetrics->m_nLeft = (SCREEN_WIDTH - (pMetrics->m_nPieceDim * nSpotsNeededHorizontally))/2;
-   pMetrics->m_nTop = (SCREEN_HEIGHT - (pMetrics->m_nPieceDim * nSpotsNeededVertically))/2;
+   int nBoardDim = ((pMetrics->m_nPieceDim * nWidth) > (pMetrics->m_nPieceDim * nHeight)) ? pMetrics->m_nPieceDim * nWidth : pMetrics->m_nPieceDim * nHeight;
 
-   pMetrics->m_nLeftBoard = pMetrics->m_nLeft + pMetrics->m_nMaxColIndicators*pMetrics->m_nPieceDim;
-   pMetrics->m_nTopBoard = pMetrics->m_nTop + pMetrics->m_nMaxRowIndicators*pMetrics->m_nPieceDim;
+   pMetrics->m_nLeftBoard = SCREEN_WIDTH - nGapHorizontally - nBoardDim;
+   pMetrics->m_nTopBoard = nIndicatorSpaceNeededVertically;
+
+   pMetrics->m_nLeft = pMetrics->m_nLeftBoard - nIndicatorSpaceNeededHorizontally;
+   pMetrics->m_nTop = 0;
 }
 
 void FreeMetrics(struct Metrics** ppMetrics)
@@ -50,6 +76,7 @@ void FreeMetrics(struct Metrics** ppMetrics)
 
 int MetricsGetPieceDim(struct Metrics* pMetrics)
 {
+//   printf("PieceDim: %d\n", pMetrics->m_nPieceDim);
    return pMetrics->m_nPieceDim;
 }
 
@@ -83,7 +110,7 @@ int MetricsGetLeftBoard(struct Metrics* pMetrics)
 
 int MetricsGetTopBoard(struct Metrics* pMetrics)
 {
-   //printf("TopBoard: %d\n", pMetrics->m_pTopBoard);
+   //printf("TopBoard: %d\n", pMetrics->m_nTopBoard);
    return pMetrics->m_nTopBoard;
 }
 
