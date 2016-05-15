@@ -6,7 +6,9 @@
 void CreateMainMenu(struct MainMenu** ppMenu)
 {
    *ppMenu = malloc(sizeof(struct MainMenu));
-   (*ppMenu)->m_eChoice = Play;
+   struct MainMenu* pMenu = (*ppMenu);
+   pMenu->m_eChoice = Play;
+   pMenu->m_nLevelNum = 1;
 }
 
 void FreeMainMenu(struct MainMenu** ppMenu)
@@ -32,6 +34,12 @@ int MainMenuLoop(struct MainMenu* pMenu)
    char* strOptions = "O\0p\0t\0i\0o\0n\0s\0\0";
    gui_gc_drawString(gc, strOptions, 50, 70, GC_SM_TOP);
 
+   char buf[8];
+   char buffer[16];
+   sprintf(buf, "%d", pMenu->m_nLevelNum);
+   ascii2utf16(buffer, buf, 16);
+   gui_gc_drawString(gc, buffer, 160, 50, GC_SM_TOP);
+
    if( pMenu->m_eChoice == Play ) {
       gui_gc_drawLine(gc, 50, 50, 100, 50);
       gui_gc_drawLine(gc, 100, 50, 100, 70);
@@ -56,8 +64,14 @@ int MainMenuLoop(struct MainMenu* pMenu)
       pMenu->m_eChoice = Play;
    else if( isKeyPressed(KEY_NSPIRE_DOWN) && pMenu->m_eChoice == Play )
       pMenu->m_eChoice = Options;
+
    if( isKeyPressed(KEY_NSPIRE_ENTER) )
       return 0;
+
+   if( isKeyPressed(KEY_NSPIRE_LEFT) && pMenu->m_nLevelNum > 1 )
+      pMenu->m_nLevelNum--;
+   else if( isKeyPressed(KEY_NSPIRE_RIGHT) && pMenu->m_nLevelNum < 36 )
+      pMenu->m_nLevelNum++;
    
    return 1;
 }
@@ -65,5 +79,10 @@ int MainMenuLoop(struct MainMenu* pMenu)
 int MainMenuShouldQuit(struct MainMenu* pMenu)
 {
    return pMenu->m_eChoice == Quit;
+}
+
+int MainMenuGetLevelNum(struct MainMenu* pMenu)
+{
+   return pMenu->m_nLevelNum;
 }
 

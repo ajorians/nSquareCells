@@ -14,11 +14,13 @@ enum MenuChoice
 struct MainMenu
 {
    enum MenuChoice m_eChoice;
+   int m_nLevelNum;
 };
 
 void CreateMainMenu(struct MainMenu** ppMenu);
 void FreeMainMenu(struct MainMenu** ppMenu);
 int MainMenuLoop(struct MainMenu* pMenu);
 int MainMenuShouldQuit(struct MainMenu* pMenu);
+int MainMenuGetLevelNum(struct MainMenu* pMenu);
 
 #endif

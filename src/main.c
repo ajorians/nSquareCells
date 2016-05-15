@@ -24,6 +24,10 @@ int main(int argc, char *argv[])
          CreateMainMenu(&pMenu);
          while(MainMenuLoop(pMenu)){}
          bShouldQuit = MainMenuShouldQuit(pMenu);
+         if( bShouldQuit == 0 ) {
+            nLevelNumber = MainMenuGetLevelNum(pMenu);
+            LevelLoad(strLevelData, nLevelNumber);
+         }
          FreeMainMenu(&pMenu);
 
          if( bShouldQuit )
@@ -41,7 +45,7 @@ int main(int argc, char *argv[])
       else {
          struct Game* pGame = NULL;
          int bShouldQuit = 0;
-         CreateGame(&pGame, LEVEL_19);
+         CreateGame(&pGame, strLevelData);
          while(GameLoop(pGame)){}
          bShouldQuit = GameShouldQuit(pGame);
          FreeGame(&pGame);
