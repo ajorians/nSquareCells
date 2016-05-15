@@ -18,6 +18,9 @@ void LevelLoad(char* pstr, int nLevelNum)
    else if( nLevelNum == 5 ) {
       strcpy(pstr, LEVEL_5);
    }
+   else if( nLevelNum == 6 ) {
+      strcpy(pstr, LEVEL_6);
+   }
    else if( nLevelNum == 19 ) {
       strcpy(pstr, LEVEL_19);
    }
