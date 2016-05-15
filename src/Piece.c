@@ -63,6 +63,12 @@ void PieceDraw(struct Piece* pPiece, Gc* pgc)
       int nPosX = nPieceX + nXOffset;
       int nPosY = nPieceY + nYOffset;
 
+      if( IsSpotNumberMet(pPiece->m_Square, pPiece->m_nX, pPiece->m_nY) == SQUARELIB_SPOT_VALUE_MET ) {
+         gui_gc_setColorRGB(*pgc, 127, 127, 127);
+      } else {
+         gui_gc_setColorRGB(*pgc, 255, 255, 255);
+      }
+
       gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
    }
 }

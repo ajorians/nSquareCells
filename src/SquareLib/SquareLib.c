@@ -703,9 +703,71 @@ int GetSpotNumber(SquareLib api, int nX, int nY, int* pnValue)
 
 }
 
+struct ContinousMarkedSpots
+{
+   int x, y;
+};
+void FindContinousSurroudingSpots(struct SquareBoard* pBoard, int nX, int nY, struct ContinousMarkedSpots arrSpots[], int* pnCount)
+{
+   int i;
+   //Check to see if this cell is in the list
+   for(i=0; i<*pnCount; i++) {
+      struct ContinousMarkedSpots spot = arrSpots[i];
+      if( spot.x == nX && spot.y == nY )
+         return;
+   }
 
+   struct Cell* pCell = GetAt(pBoard, nX, nY);
+   if( pCell->m_eMarked != Marked )
+      return;
 
+   arrSpots[*pnCount].x = nX;
+   arrSpots[*pnCount].y = nY;
+   *pnCount = *pnCount + 1;
 
+   if( nX > 0 )
+      FindContinousSurroudingSpots(pBoard, nX-1, nY, arrSpots, pnCount);
+   if( nY > 0 )
+      FindContinousSurroudingSpots(pBoard, nX, nY-1, arrSpots, pnCount);
+   if( (nX-1) < pBoard->m_nWidth )
+      FindContinousSurroudingSpots(pBoard, nX+1, nY, arrSpots, pnCount);
+   if( (nY-1) < pBoard->m_nHeight )
+      FindContinousSurroudingSpots(pBoard, nX, nY+1, arrSpots, pnCount);
+}
+
+int IsSpotNumberMet(SquareLib api, int nX, int nY)
+{
+   struct SquareCells* pS;
+   DEBUG_FUNC_NAME;
+
+   pS = (struct SquareCells*)api;
+   if( nX < 0 || nX >= pS->m_pBoard->m_nWidth || nY < 0 || nY >= pS->m_pBoard->m_nHeight )
+      return SQUARELIB_BADARGUMENT;
+
+   struct Cell* pCell = GetAt(pS->m_pBoard, nX, nY);
+   int nValue = pCell->m_nValue;
+   int nCount = GetSquareContinousMarkedCount(api, nX, nY);
+
+   if( nCount == nValue )
+      return SQUARELIB_SPOT_VALUE_MET;
+   return SQUARELIB_SPOT_VALUE_NOTMET;
+}
+
+int GetSquareContinousMarkedCount(SquareLib api, int nX, int nY)
+{
+   struct SquareCells* pS;
+   DEBUG_FUNC_NAME;
+
+   pS = (struct SquareCells*)api;
+   if( nX < 0 || nX >= pS->m_pBoard->m_nWidth || nY < 0 || nY >= pS->m_pBoard->m_nHeight )
+      return SQUARELIB_BADARGUMENT;
+
+   struct ContinousMarkedSpots arrContinousSpots[64];
+   int nCount = 0;
+   FindContinousSurroudingSpots(pS->m_pBoard, nX, nY, arrContinousSpots, &nCount);
+   //printf("Continous count for %d,%d is: %d\n", nX, nY, nCount);
+   return nCount;
+}
 
 
 

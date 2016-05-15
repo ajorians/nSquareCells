@@ -336,6 +336,41 @@ int TestSpotNumbers()
    return TEST_SUCCEEDED;
 }
 
+int TestContinousMarkedCount()
+{
+   SquareLib api;
+   PRINT_FUNC;
+
+   if( SQUARELIB_OK != SquareLibCreate(&api, LEVEL_5) )
+      return TEST_FAILED;
+
+   if( GetSquareContinousMarkedCount(api, 0, 0) != 0 )
+      return TEST_FAILED;
+
+   if( SQUARELIB_OK != ToggleSquareMark(api, 0, 0) )
+      return TEST_FAILED;
+
+   if( GetSquareContinousMarkedCount(api, 0, 0) != 1 )
+      return TEST_FAILED;
+
+   if( SQUARELIB_OK != ToggleSquareMark(api, 0, 1) )
+      return TEST_FAILED;
+
+   if( GetSquareContinousMarkedCount(api, 0, 0) != 2 )
+      return TEST_FAILED;
+
+   if( SQUARELIB_OK != ToggleSquareMark(api, 0, 2) )
+      return TEST_FAILED;
+
+   if( GetSquareContinousMarkedCount(api, 0, 0) != 3 )
+      return TEST_FAILED;
+
+   if( SQUARELIB_OK != SquareLibFree(&api) )
+      return TEST_FAILED;
+
+   return TEST_SUCCEEDED;
+}
+
 typedef int (*testfunc)();
    testfunc g_Tests[] =
    {
@@ -347,7 +382,8 @@ typedef int (*testfunc)();
       TestIndicatorCount,
       TestIndicators,
       TestIndicatorsTypes,
-      TestSpotNumbers
+      TestSpotNumbers,
+      TestContinousMarkedCount
    };
 
 void RunTests()
