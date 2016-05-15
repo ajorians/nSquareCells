@@ -129,20 +129,30 @@ int GameLoop(struct Game* pGame)
       pGame->m_bShouldQuit = 0;//Could change to completly close program
       return 0;
    }
-   else if( IsKeyPressed(KEY_NSPIRE_LEFT) )
+   else if( IsKeyPressed(KEY_NSPIRE_LEFT) ) {
+      wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Left);
-   else if( IsKeyPressed(KEY_NSPIRE_RIGHT) )
+   }
+   else if( IsKeyPressed(KEY_NSPIRE_RIGHT) ) {
+      wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Right);
-   else if( IsKeyPressed(KEY_NSPIRE_UP) )
+   }
+   else if( IsKeyPressed(KEY_NSPIRE_UP) ) {
+      wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Up);
-   else if( IsKeyPressed(KEY_NSPIRE_DOWN) )
+   }
+   else if( IsKeyPressed(KEY_NSPIRE_DOWN) ) {
+      wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Down);
+   }
    else if( IsKeyPressed(KEY_NSPIRE_CTRL) ) {
+      wait_no_key_pressed();
       IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
       if( nDestroyed == SQUARELIB_NOT_DESTROYED )
          DestroySquare(pGame->m_Square, nSelectionX, nSelectionY);
    }
    else if( IsKeyPressed(KEY_NSPIRE_SHIFT) ) {
+      wait_no_key_pressed();
       IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
       if( nDestroyed == SQUARELIB_NOT_DESTROYED )
          ToggleSquareMark(pGame->m_Square, nSelectionX, nSelectionY);

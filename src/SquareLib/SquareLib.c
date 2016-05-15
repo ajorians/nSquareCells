@@ -710,6 +710,14 @@ struct ContinousMarkedSpots
 void FindContinousSurroudingSpots(struct SquareBoard* pBoard, int nX, int nY, struct ContinousMarkedSpots arrSpots[], int* pnCount)
 {
    int i;
+
+#ifdef SQUARELIB_RUN_SAFE
+   if( nX < 0 || nY < 0 || nX >= pBoard->m_nWidth || nY >= pBoard->m_nHeight ) {
+      printf("FindContinous attempting to access invalid spot: %d,%d\n", nX, nY);
+      return;
+   }
+#endif
+
    //Check to see if this cell is in the list
    for(i=0; i<*pnCount; i++) {
       struct ContinousMarkedSpots spot = arrSpots[i];
@@ -729,9 +737,9 @@ void FindContinousSurroudingSpots(struct SquareBoard* pBoard, int nX, int nY, st
       FindContinousSurroudingSpots(pBoard, nX-1, nY, arrSpots, pnCount);
    if( nY > 0 )
       FindContinousSurroudingSpots(pBoard, nX, nY-1, arrSpots, pnCount);
-   if( (nX-1) < pBoard->m_nWidth )
+   if( nX < (pBoard->m_nWidth-1) )
       FindContinousSurroudingSpots(pBoard, nX+1, nY, arrSpots, pnCount);
-   if( (nY-1) < pBoard->m_nHeight )
+   if( nY < (pBoard->m_nHeight-1) )
       FindContinousSurroudingSpots(pBoard, nX, nY+1, arrSpots, pnCount);
 }
 

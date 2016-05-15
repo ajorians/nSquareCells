@@ -3,29 +3,16 @@
 
 void LevelLoad(char* pstr, int nLevelNum)
 {
-   if( nLevelNum == 1 ) {
-      strcpy(pstr, LEVEL_1);
-   }
-   else if( nLevelNum == 2 ) {
-      strcpy(pstr, LEVEL_2);
-   }
-   else if( nLevelNum == 3 ) {
-      strcpy(pstr, LEVEL_3);
-   }
-   else if( nLevelNum == 4 ) {
-      strcpy(pstr, LEVEL_4);
-   }
-   else if( nLevelNum == 5 ) {
-      strcpy(pstr, LEVEL_5);
-   }
-   else if( nLevelNum == 6 ) {
-      strcpy(pstr, LEVEL_6);
-   }
-   else if( nLevelNum == 19 ) {
-      strcpy(pstr, LEVEL_19);
-   }
-   else {
-      strcpy(pstr, LEVEL_33);
+   switch( nLevelNum ) {
+   case 1: strcpy(pstr, LEVEL_1); break;
+   case 2: strcpy(pstr, LEVEL_2); break;
+   case 3: strcpy(pstr, LEVEL_3); break;
+   case 4: strcpy(pstr, LEVEL_4); break;
+   case 5: strcpy(pstr, LEVEL_5); break;
+   case 6: strcpy(pstr, LEVEL_6); break;
+   case 7: strcpy(pstr, LEVEL_7); break;
+   case 19: strcpy(pstr, LEVEL_19); break;
+   default: strcpy(pstr, LEVEL_33); break;
    }
 }
 

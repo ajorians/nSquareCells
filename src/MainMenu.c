@@ -60,18 +60,28 @@ int MainMenuLoop(struct MainMenu* pMenu)
       pMenu->m_eChoice = Quit;
       return 0;
    }
-   if( isKeyPressed(KEY_NSPIRE_UP) && pMenu->m_eChoice == Options )
+   if( isKeyPressed(KEY_NSPIRE_UP) && pMenu->m_eChoice == Options ) {
+      wait_no_key_pressed();
       pMenu->m_eChoice = Play;
-   else if( isKeyPressed(KEY_NSPIRE_DOWN) && pMenu->m_eChoice == Play )
+   }
+   else if( isKeyPressed(KEY_NSPIRE_DOWN) && pMenu->m_eChoice == Play ) {
+      wait_no_key_pressed();
       pMenu->m_eChoice = Options;
+   }
 
-   if( isKeyPressed(KEY_NSPIRE_ENTER) )
+   if( isKeyPressed(KEY_NSPIRE_ENTER) ) {
+      wait_no_key_pressed();
       return 0;
+   }
 
-   if( isKeyPressed(KEY_NSPIRE_LEFT) && pMenu->m_nLevelNum > 1 )
+   if( isKeyPressed(KEY_NSPIRE_LEFT) && pMenu->m_nLevelNum > 1 ) {
+      wait_no_key_pressed();
       pMenu->m_nLevelNum--;
-   else if( isKeyPressed(KEY_NSPIRE_RIGHT) && pMenu->m_nLevelNum < 36 )
+   }
+   else if( isKeyPressed(KEY_NSPIRE_RIGHT) && pMenu->m_nLevelNum < 36 ) {
+      wait_no_key_pressed();
       pMenu->m_nLevelNum++;
+   }
    
    return 1;
 }
