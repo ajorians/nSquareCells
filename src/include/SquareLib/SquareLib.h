@@ -20,6 +20,9 @@ typedef void* SquareLib;
 #define SQUARELIB_NUMBER_VAL_MET	(1)
 #define SQUARELIB_NUMBER_VAL_NOTMET	(0)
 
+#define SQUARELIB_HAS_VALUE		(1)
+#define SQUARELIB_NO_VALUE		(0)
+
 enum IndicatorType
 {
    NoNumber = 0,
@@ -54,5 +57,6 @@ int GetSquareIndicatorsForRow(SquareLib api, int nIndex, int arr[8]);
 int GetSquareIndicatorsForCol(SquareLib api, int nIndex, int arr[8]);
 int GetSquareIndicatorTypeRow(SquareLib api, int nIndex, enum IndicatorType* pIndicator);
 int GetSquareIndicatorTypeCol(SquareLib api, int nIndex, enum IndicatorType* pIndicator);
+int GetSpotNumber(SquareLib api, int nX, int nY, int* pnValue);
 
 #endif

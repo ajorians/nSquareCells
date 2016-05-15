@@ -292,6 +292,50 @@ int TestIndicatorsTypes()
    return TEST_SUCCEEDED;
 }
 
+#define LEVEL_5  "SquareCells 1 4 4 0 0 0 0 0 0 0 0 0 0 1 2 2 0 1 1 0 1 1 0 3 1 1 0 2 2 1 0 3 2 1 4 0 3 1 2 1 3 1 0 3 3 1 0 \"\""
+
+int TestSpotNumbers()
+{
+   SquareLib api;
+   unsigned int x,y,i;
+   PRINT_FUNC;
+
+   if( SQUARELIB_OK != SquareLibCreate(&api, LEVEL_5) )
+      return TEST_FAILED;
+
+   int aSpotsWithNumbers[][3] = {
+      { 0, 0, 2 },
+      { 2, 0, 1 },
+      { 3, 2, 4 },
+      { 0, 3, 2 }
+   };
+
+   for(x=0; x<GetSquareWidth(api); x++) {
+      for(y=0; y<GetSquareHeight(api); y++) {
+         int nSpotValue = 0;
+         int nHasSpot = GetSpotNumber(api, x, y, &nSpotValue);
+         int nShouldHaveSpot = 0;
+         int nExpectedSpotValue = 0;
+         for(i=0; i<sizeof(aSpotsWithNumbers)/sizeof(aSpotsWithNumbers[0]); i++) {
+            if( aSpotsWithNumbers[i][0] == x && aSpotsWithNumbers[i][1] == y ) {
+               nShouldHaveSpot = 1;
+               nExpectedSpotValue = aSpotsWithNumbers[i][2];
+            }
+         }
+
+         if( nHasSpot != nShouldHaveSpot )
+            return TEST_FAILED;
+         if( nHasSpot == SQUARELIB_HAS_VALUE && nSpotValue != nExpectedSpotValue )
+            return TEST_FAILED;
+      }
+   }
+
+   if( SQUARELIB_OK != SquareLibFree(&api) )
+      return TEST_FAILED;
+
+   return TEST_SUCCEEDED;
+}
+
 typedef int (*testfunc)();
    testfunc g_Tests[] =
    {
@@ -302,7 +346,8 @@ typedef int (*testfunc)();
       TestGameOver,
       TestIndicatorCount,
       TestIndicators,
-      TestIndicatorsTypes
+      TestIndicatorsTypes,
+      TestSpotNumbers
    };
 
 void RunTests()

@@ -687,7 +687,21 @@ int GetSquareIndicatorTypeCol(SquareLib api, int nIndex, enum IndicatorType* pIn
    return SQUARELIB_OK;
 }
 
+int GetSpotNumber(SquareLib api, int nX, int nY, int* pnValue)
+{
+   struct SquareCells* pS;
+   DEBUG_FUNC_NAME;
 
+   pS = (struct SquareCells*)api;
+   if( nX < 0 || nX >= pS->m_pBoard->m_nWidth || nY < 0 || nY >= pS->m_pBoard->m_nHeight )
+      return SQUARELIB_BADARGUMENT;
+
+   struct Cell* pCell = GetAt(pS->m_pBoard, nX, nY);
+   if( pnValue )
+      *pnValue = pCell->m_nValue;
+   return pCell->m_nValue > 0 ? SQUARELIB_HAS_VALUE : SQUARELIB_NO_VALUE;
+
+}
 
 
 
