@@ -3,12 +3,12 @@
 #include <ngc.h>
 #include "MainMenu.h"
 
-void CreateMainMenu(struct MainMenu** ppMenu)
+void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum)
 {
    *ppMenu = malloc(sizeof(struct MainMenu));
    struct MainMenu* pMenu = (*ppMenu);
    pMenu->m_eChoice = Play;
-   pMenu->m_nLevelNum = 1;
+   pMenu->m_nLevelNum = nLevelNum >= 1 ? nLevelNum : 1;
 }
 
 void FreeMainMenu(struct MainMenu** ppMenu)

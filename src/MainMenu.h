@@ -17,7 +17,7 @@ struct MainMenu
    int m_nLevelNum;
 };
 
-void CreateMainMenu(struct MainMenu** ppMenu);
+void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum);
 void FreeMainMenu(struct MainMenu** ppMenu);
 int MainMenuLoop(struct MainMenu* pMenu);
 int MainMenuShouldQuit(struct MainMenu* pMenu);

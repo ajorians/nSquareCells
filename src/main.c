@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
       if( argc != 2 ) {
          struct MainMenu* pMenu = NULL;
          int bShouldQuit = 0;
-         CreateMainMenu(&pMenu);
+         CreateMainMenu(&pMenu, nLevelNumber);
          while(MainMenuLoop(pMenu)){}
          bShouldQuit = MainMenuShouldQuit(pMenu);
          if( bShouldQuit == 0 ) {
