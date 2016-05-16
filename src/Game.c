@@ -64,6 +64,24 @@ void FreeGame(struct Game** ppGame)
    *ppGame = NULL;
 }
 
+void DrawMistakes(int nMistakes, Gc* pgc)
+{
+   if( nMistakes <= 0 )
+      return;
+
+   gui_gc_setColorRGB(*pgc, 127, 127, 127);
+   const int nSquareSize = 5;
+   int nSquaresToDraw = nMistakes;
+   if( nMistakes > 5 ) nSquaresToDraw = 5;
+
+   int nX = 22, nY = 28;
+   for(int i=0; i<nSquaresToDraw; i++) {
+      gui_gc_fillRect(*pgc, nX, nY, nSquareSize, nSquareSize);
+      nX += nSquareSize;
+      nX += 2;
+   }
+}
+
 void DrawBoard(struct Game* pGame)
 {
    gui_gc_setColorRGB(pGame->m_gc, 0, 250, 250);
@@ -103,8 +121,18 @@ void DrawBoard(struct Game* pGame)
    sprintf(buffer, "%d to remove", GetSquaresRemaining(pGame->m_Square));
    char bufferUnicode[32];
    ascii2utf16(bufferUnicode, buffer, 32);
+
    gui_gc_setColorRGB(pGame->m_gc, 0, 0, 0);
    gui_gc_drawString(pGame->m_gc, bufferUnicode, 10, 10, GC_SM_TOP);
+
+   gui_gc_drawLine(pGame->m_gc, 9, 23, 22, 23);
+
+   sprintf(buffer, "%d", nWidth*nHeight);
+   ascii2utf16(bufferUnicode, buffer, 32);
+   gui_gc_drawString(pGame->m_gc, bufferUnicode, 10, 23, GC_SM_TOP);
+
+   //Draw mistakes
+   DrawMistakes(GetSquareMistakes(pGame->m_Square), &pGame->m_gc);
 
    gui_gc_blit_to_screen(pGame->m_gc);
 }
@@ -124,7 +152,7 @@ int GameLoop(struct Game* pGame)
 
    int nSelectionX = pGame->m_pSelector->m_nSelectionX;
    int nSelectionY = pGame->m_pSelector->m_nSelectionY;
-   int nDestroyed = 0;
+   int nDestroyed = 0, nMarked = 0;
    if( IsKeyPressed(KEY_NSPIRE_ESC) ) {
       pGame->m_bShouldQuit = 0;//Could change to completly close program
       return 0;
@@ -147,9 +175,23 @@ int GameLoop(struct Game* pGame)
    }
    else if( IsKeyPressed(KEY_NSPIRE_CTRL) ) {
       wait_no_key_pressed();
-      IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
-      if( nDestroyed == SQUARELIB_NOT_DESTROYED )
-         DestroySquare(pGame->m_Square, nSelectionX, nSelectionY);
+
+      IsSquareMarked(pGame->m_Square, nSelectionX, nSelectionY, &nMarked);
+      if( nMarked == SQUARELIB_NOT_MARKED ) {
+
+         IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
+         if( nDestroyed == SQUARELIB_NOT_DESTROYED )
+            DestroySquare(pGame->m_Square, nSelectionX, nSelectionY);
+
+         //Check if destroyed because if not you made a mistake
+         IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
+         if( nDestroyed == SQUARELIB_NOT_DESTROYED ) {
+            int nWidth = GetSquareWidth(pGame->m_Square);
+            struct Piece* pPiece = &pGame->m_apPieces[nSelectionX+nSelectionY*nWidth];
+            PieceMistaken(pPiece);
+         }
+
+      }
    }
    else if( IsKeyPressed(KEY_NSPIRE_SHIFT) ) {
       wait_no_key_pressed();

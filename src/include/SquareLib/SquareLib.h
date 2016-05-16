@@ -45,6 +45,7 @@ void ClearSquareLibError(SquareLib api);
 //////////////////////////////////////////////
 //SquareLib related functions
 //////////////////////////////////////////////
+int GetSquareMistakes(SquareLib api);
 int GetSquareWidth(SquareLib api);
 int GetSquareHeight(SquareLib api);
 int ToggleSquareMark(SquareLib api, int nX, int nY);

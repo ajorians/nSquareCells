@@ -299,6 +299,15 @@ void ClearSquareLibError(SquareLib api)
 }
 
 //SquareLib related functions
+int GetSquareMistakes(SquareLib api)
+{
+   struct SquareCells* pS;
+   DEBUG_FUNC_NAME;
+
+   pS = (struct SquareCells*)api;
+   return pS->m_nMistakesMade;
+}
+
 int GetSquareWidth(SquareLib api)
 {
    struct SquareCells* pS;
@@ -365,7 +374,7 @@ int DestroySquare(SquareLib api, int nX, int nY)
    struct Cell* pCell = GetAt(pS->m_pBoard, nX, nY);
    if( pCell->m_bIsBomb ) {
       printf("Attempted to destroy cell that is a bomb: %d,%d\n", nX, nY);
-      //TODO: Increase mistake count
+      pS->m_nMistakesMade++;
       pCell->m_eMarked = Marked;
    }
    else {

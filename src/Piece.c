@@ -7,6 +7,7 @@ void CreatePiece(struct Piece* pPiece, int x, int y, SquareLib pSquare, struct M
 {
    pPiece->m_nX = x;
    pPiece->m_nY = y;
+   pPiece->m_nPieceMistaken = 0;
    pPiece->m_pMetrics = pMetrics;
    pPiece->m_Square = pSquare;
 }
@@ -21,6 +22,30 @@ void PieceDraw(struct Piece* pPiece, Gc* pgc)
        nPieceY = MetricsGetYForSpot(pPiece->m_pMetrics, pPiece->m_nX, pPiece->m_nY);
 
    int nPieceDim = MetricsGetPieceDim(pPiece->m_pMetrics);
+
+   if( pPiece->m_nPieceMistaken > 0 ) {
+      const int nShakeAmount = nPieceDim/2;
+      int nStage = (pPiece->m_nPieceMistaken + 4)/ 5;
+      switch(nStage) {
+      case 5:
+         nPieceY += nShakeAmount;
+         break;
+      case 4:
+         nPieceY -= nShakeAmount;
+         break;
+      case 3:
+         nPieceX += nShakeAmount;
+         break;
+      case 2:
+         nPieceX -= nShakeAmount;
+         break;
+      case 1:
+         nPieceX += nShakeAmount;
+         nPieceY += nShakeAmount;
+         break;
+      }
+      pPiece->m_nPieceMistaken--;
+   }
 
    int nDestroyed = 0, nMarked = 0;
    IsSquareDestroyed(pPiece->m_Square, pPiece->m_nX, pPiece->m_nY, &nDestroyed);
@@ -71,5 +96,10 @@ void PieceDraw(struct Piece* pPiece, Gc* pgc)
 
       gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
    }
+}
+
+void PieceMistaken(struct Piece* pPiece)
+{
+   pPiece->m_nPieceMistaken = 25;
 }
 
