@@ -673,7 +673,6 @@ int GetSquareIndicatorEnabledForRow(SquareLib api, int nRowIndex, int nIndicator
    int nCount;
    int nMarkedSeq;
    int nIndicatorPos;
-   int nSpotsTraversed;
    int nLastThing;//0=Unspecified, 1=Marking, 2=Destroyed spot
    enum IndicatorType eIndicatorType;
    DEBUG_FUNC_NAME;
@@ -685,12 +684,12 @@ int GetSquareIndicatorEnabledForRow(SquareLib api, int nRowIndex, int nIndicator
    if( nIndicatorIndex < 0 )
       return SQUARELIB_BADARGUMENT;
 
-   nCount = GetSquareIndicatorTypeRow(api, nRowIndex, &eIndicatorType);
+   GetSquareIndicatorTypeRow(api, nRowIndex, &eIndicatorType);
 
    if( eIndicatorType == NoNumber )
       return SQUARELIB_BADARGUMENT;
 
-   GetSquareIndicatorsForRow(api, nRowIndex, arr);
+   nCount = GetSquareIndicatorsForRow(api, nRowIndex, arr);
 
    if( eIndicatorType == FullNumbers ) {
       int nMarked = 0;
@@ -711,20 +710,15 @@ int GetSquareIndicatorEnabledForRow(SquareLib api, int nRowIndex, int nIndicator
       return nMarked == arr[0] ? SQUARELIB_INDICATOR_DISABLED : SQUARELIB_INDICATOR_ENABLED;
    }
 
-   DEBUG_MSG("Multiple numbers for row index %d, indicatorIndex: %d\n", nRowIndex, nIndicatorIndex);
-
    nMarkedSeq = 0;
    nIndicatorPos = 0;
    nLastThing = 0;
-   nSpotsTraversed = 0;
    for(int x=0; x<pS->m_pBoard->m_nWidth; x++) {
       int nValue;
       IsSquareMarked(api, x, nRowIndex, &nValue);
       if( nValue == SQUARELIB_MARKED ) {
          nMarkedSeq++;
-         nSpotsTraversed++;
          nLastThing = 1;
-         DEBUG_MSG("marked: row index %d, indicatorIndex: %d, x: %d now has %d marked\n", nRowIndex, nIndicatorIndex, x, nMarkedSeq);
          continue;
       }
 
@@ -737,30 +731,24 @@ int GetSquareIndicatorEnabledForRow(SquareLib api, int nRowIndex, int nIndicator
             nLastThing = 2;
             nIndicatorPos++;
          }
-         nSpotsTraversed++;
-         DEBUG_MSG("destroyed: row index %d, indicatorIndex: %d, x: %d now has %d marked\n", nRowIndex, nIndicatorIndex, x, nMarkedSeq);
          continue;
       }
-      DEBUG_MSG("row index %d, indicatorIndex: %d spot: %d is not destroyed\n", nRowIndex, nIndicatorIndex, x);
       nLastThing = 0;
       break;
    }
-   DEBUG_MSG("row index %d, indicatorIndex: %d has %d marked and needs at least %d, last thing was: %d\n", nRowIndex, nIndicatorIndex, nMarkedSeq, arr[nIndicatorPos], nLastThing);
-   if( nIndicatorIndex == nIndicatorPos && arr[nIndicatorPos] <= nMarkedSeq && nLastThing != 0 )
+   if( nIndicatorIndex == nIndicatorPos && arr[nIndicatorPos] <= nMarkedSeq && nLastThing != 0 ) {
       return SQUARELIB_INDICATOR_DISABLED;
+   }
 
-   DEBUG_MSG("Right based for row index %d, indicatorIndex: %d\n", nRowIndex, nIndicatorIndex);
    //Right-based
    nMarkedSeq = 0;
    nIndicatorPos = nCount-1;
    nLastThing = 0;
-   nSpotsTraversed = 0;
    for(int x=pS->m_pBoard->m_nWidth-1; x>-1; x--) {
       int nValue;
       IsSquareMarked(api, x, nRowIndex, &nValue);
       if( nValue == SQUARELIB_MARKED ) {
          nMarkedSeq++;
-         nSpotsTraversed++;
          nLastThing = 1;
          continue;
       }
@@ -774,7 +762,6 @@ int GetSquareIndicatorEnabledForRow(SquareLib api, int nRowIndex, int nIndicator
             nLastThing = 2;
             nIndicatorPos--;
          }
-         nSpotsTraversed++;
          continue;
       }
       nLastThing = 0;
@@ -793,12 +780,9 @@ int GetSquareIndicatorEnabledForCol(SquareLib api, int nColIndex, int nIndicator
    int nCount;
    int nMarkedSeq;
    int nIndicatorPos;
-   int nSpotsTraversed;
    int nLastThing;//0=Unspecified, 1=Marking, 2=Destroyed spot
    enum IndicatorType eIndicatorType;
    DEBUG_FUNC_NAME;
-
-   DEBUG_MSG("GetSquareIndicatorEnabledForCol: Col: %d Index: %d\n", nColIndex, nIndicatorIndex);
 
    pS = (struct SquareCells*)api;
    if( nColIndex < 0 || nColIndex >= pS->m_pBoard->m_nWidth )
@@ -807,12 +791,12 @@ int GetSquareIndicatorEnabledForCol(SquareLib api, int nColIndex, int nIndicator
    if( nIndicatorIndex < 0 )
       return SQUARELIB_BADARGUMENT;
 
-   nCount = GetSquareIndicatorTypeCol(api, nColIndex, &eIndicatorType);
+   GetSquareIndicatorTypeCol(api, nColIndex, &eIndicatorType);
 
    if( eIndicatorType == NoNumber )
       return SQUARELIB_BADARGUMENT;
 
-   GetSquareIndicatorsForCol(api, nColIndex, arr);
+   nCount = GetSquareIndicatorsForCol(api, nColIndex, arr);
 
    if( eIndicatorType == FullNumbers ) {
       int nMarked = 0;
@@ -829,22 +813,17 @@ int GetSquareIndicatorEnabledForCol(SquareLib api, int nColIndex, int nIndicator
             return SQUARELIB_INDICATOR_ENABLED;
          }
       }
-      DEBUG_MSG("Full numbers and no squares not marked nor destroyed\n");
       return nMarked == arr[0] ? SQUARELIB_INDICATOR_DISABLED : SQUARELIB_INDICATOR_ENABLED;
    }
-
-   DEBUG_MSG("multiple numbers\n");
 
    nMarkedSeq = 0;
    nIndicatorPos = 0;
    nLastThing = 0;
-   nSpotsTraversed = 0;
    for(int y=0; y<pS->m_pBoard->m_nHeight; y++) {
       int nValue;
       IsSquareMarked(api, nColIndex, y, &nValue);
       if( nValue == SQUARELIB_MARKED ) {
          nMarkedSeq++;
-         nSpotsTraversed++;
          nLastThing = 1;
          continue;
       }
@@ -852,7 +831,6 @@ int GetSquareIndicatorEnabledForCol(SquareLib api, int nColIndex, int nIndicator
       IsSquareDestroyed(api, nColIndex, y, &nValue);
       if( nValue == SQUARELIB_DESTROYED ) {
          if( nIndicatorIndex == nIndicatorPos && arr[nIndicatorPos] <= nMarkedSeq ) {
-            DEBUG_MSG("Top based; destroyed end with %d marked where need %d\n", nMarkedSeq, arr[nIndicatorPos]);
             return SQUARELIB_INDICATOR_DISABLED;//Could still be possible with bottom-based
          }
          nMarkedSeq = 0;
@@ -860,13 +838,11 @@ int GetSquareIndicatorEnabledForCol(SquareLib api, int nColIndex, int nIndicator
             nLastThing = 2;
             nIndicatorPos++;
          }
-         nSpotsTraversed++;
          continue;
       }
       nLastThing = 0;
       break;
    }
-   DEBUG_MSG("Top based; reached end with %d marked where need %d\n", nMarkedSeq, arr[nIndicatorPos]);
    if( nIndicatorIndex == nIndicatorPos && arr[nIndicatorPos] <= nMarkedSeq && nLastThing != 0)
       return SQUARELIB_INDICATOR_DISABLED;
 
@@ -874,27 +850,25 @@ int GetSquareIndicatorEnabledForCol(SquareLib api, int nColIndex, int nIndicator
    nMarkedSeq = 0;
    nIndicatorPos = nCount-1;
    nLastThing = 0;
-   nSpotsTraversed = 0;
    for(int y=pS->m_pBoard->m_nHeight-1; y>-1; y--) {
       int nValue;
       IsSquareMarked(api, nColIndex, y, &nValue);
       if( nValue == SQUARELIB_MARKED ) {
          nMarkedSeq++;
-         nSpotsTraversed++;
          nLastThing = 1;
          continue;
       }
 
       IsSquareDestroyed(api, nColIndex, y, &nValue);
       if( nValue == SQUARELIB_DESTROYED ) {
-         if( nIndicatorIndex == nIndicatorPos && arr[nIndicatorPos] <= nMarkedSeq )
+         if( nIndicatorIndex == nIndicatorPos && arr[nIndicatorPos] <= nMarkedSeq ) {
             return SQUARELIB_INDICATOR_DISABLED;
+         }
          nMarkedSeq = 0;
          if( nLastThing == 1 ) {
             nLastThing = 2;
             nIndicatorPos--;
          }
-         nSpotsTraversed++;
          continue;
       }
       nLastThing = 0;

@@ -484,6 +484,86 @@ int TestIndicatorEnabled1()
    return TEST_SUCCEEDED;
 }
 
+#define LEVEL_2  "SquareCells 1 4 4 1 1 1 1 1 1 1 0 3 0 1 0 1 1 1 0 2 1 1 0 3 1 1 0 0 2 1 0 1 2 1 0 2 2 1 0 3 2 1 0 3 3 1 0 \"\""
+
+int TestIndicatorEnabled2()
+{
+   SquareLib api;
+   unsigned int x, y;
+   int i;
+   int nIndicatorInd;
+   int nCount;
+   int arr[8];
+   PRINT_FUNC;
+
+   if( SQUARELIB_OK != SquareLibCreate(&api, LEVEL_2) )
+      return TEST_FAILED;
+
+   for(x=0; x<GetSquareWidth(api); x++) {
+      nCount = GetSquareIndicatorsForCol(api, x, arr);
+      if( nCount > 0 ) {
+         for(nIndicatorInd=0; nIndicatorInd<nCount; nIndicatorInd++) {
+            if( SQUARELIB_INDICATOR_ENABLED != GetSquareIndicatorEnabledForCol(api, x, nIndicatorInd) ) {
+               printf("For column %d indicator %d; expected indicator enabled but got disabled\n", x, nIndicatorInd);
+               return TEST_FAILED;
+            }
+         }
+      }
+   }
+   for(y=0; x<GetSquareHeight(api); y++) {
+      nCount = GetSquareIndicatorsForRow(api, y, arr);
+      if( nCount > 0 ) {
+         for(nIndicatorInd=0; nIndicatorInd<nCount; nIndicatorInd++) {
+            if( SQUARELIB_INDICATOR_ENABLED != GetSquareIndicatorEnabledForRow(api, y, nIndicatorInd) ) {
+               printf("For row %d indicator %d; expected indicator enabled but got disabled\n", y, nIndicatorInd);
+               return TEST_FAILED;
+            }
+         }
+      }
+   }
+
+   printf("Now marking some spots\n");
+   int aMarkings[][2] = {
+      { 0, 2 },
+      { 1, 2 },
+      { 2, 2 },
+      { 3, 2 }
+   };
+   for(i=0; i<sizeof(aMarkings)/sizeof(aMarkings[0]); i++) {
+      if( SQUARELIB_OK != ToggleSquareMark(api, aMarkings[i][0], aMarkings[i][1]) ) {
+         printf("Unable to mark spot %d,%d\n", aMarkings[i][0], aMarkings[i][1]);
+         return TEST_FAILED;
+      }
+   }
+
+   if( SQUARELIB_INDICATOR_DISABLED != GetSquareIndicatorEnabledForRow(api, 2, 0) ) {
+      printf("For row 2 indicator 0; expected indicator disabled but got other\n");
+      return TEST_FAILED;
+   }
+
+   printf("Now destroying some spots\n");
+   int aDestroy[][2] = {
+      { 0, 1 },
+      { 0, 3 }
+   };
+   for(i=0; i<sizeof(aDestroy)/sizeof(aDestroy[0]); i++) {
+      if( SQUARELIB_OK != DestroySquare(api, aDestroy[i][0], aDestroy[i][1]) ) {
+         printf("Unable to destroy square at %d,%d\n", aDestroy[i][0], aDestroy[i][1]);
+         return TEST_FAILED;
+      }
+   }
+
+   if( SQUARELIB_INDICATOR_DISABLED != GetSquareIndicatorEnabledForCol(api, 0, 0) ) {
+      printf("For col 0 indicator 0; expected indicator disabled but got other\n");
+      return TEST_FAILED;
+   }
+
+   if( SQUARELIB_OK != SquareLibFree(&api) )
+      return TEST_FAILED;
+
+   return TEST_SUCCEEDED;
+}
+
 typedef int (*testfunc)();
    testfunc g_Tests[] =
    {
@@ -497,7 +577,8 @@ typedef int (*testfunc)();
       TestIndicatorsTypes,
       TestSpotNumbers,
       TestContinousMarkedCount,
-      TestIndicatorEnabled1
+      TestIndicatorEnabled1,
+      TestIndicatorEnabled2
    };
 
 void RunTests()
