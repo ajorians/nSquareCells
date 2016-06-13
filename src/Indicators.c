@@ -36,7 +36,7 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
    int nTopBoard = MetricsGetTopBoard(pIndicators->m_pMetrics);
 
    gui_gc_setFont(*pgc, SerifRegular7);
-   gui_gc_setColorRGB(*pgc, 0, 0, 0);
+   //gui_gc_setColorRGB(*pgc, 0, 0, 0);
    //Top indicators
    for(int x=0; x<nWidth; x++) {
       int arr[8] = {0};
@@ -62,6 +62,13 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
          }
          int nPosX = nLeftBoard + x*nPieceDim + (nPieceDim-nWidthSpaceDesired)/2;
          int nPosY = nTop + (i+nIndicatorOffset)*nHeightSpaceDesired;
+
+         if( SQUARELIB_INDICATOR_ENABLED == GetSquareIndicatorEnabledForCol(pIndicators->m_Square, x, i) ) {
+            gui_gc_setColorRGB(*pgc, 0, 0, 0);
+         } else {
+            gui_gc_setColorRGB(*pgc, 127, 127, 127);
+         }
+
          gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
       }
    }
@@ -88,6 +95,13 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
          if( eType == FullNumbers )
             nPosX = nLeftBoard - nWidthSpaceDesired - 2;
          int nPosY = nTopBoard + y*nPieceDim + (nPieceDim-nHeightSpaceDesired)/2;
+
+         if( SQUARELIB_INDICATOR_ENABLED == GetSquareIndicatorEnabledForRow(pIndicators->m_Square, y, i) ) {
+            gui_gc_setColorRGB(*pgc, 0, 0, 0);
+         } else {
+            gui_gc_setColorRGB(*pgc, 127, 127, 127);
+         }
+
          gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
       }
    }

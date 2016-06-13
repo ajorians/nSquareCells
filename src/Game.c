@@ -14,6 +14,9 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData)
    SquareLibCreate(&(pGame->m_Square), pstrLevelData);
 
    pGame->m_gc = gui_gc_global_GC();
+   pGame->m_R = 242;
+   pGame->m_G = 242;
+   pGame->m_B = 242;
 
    gui_gc_begin(pGame->m_gc);
    pGame->m_pMetrics = NULL;
@@ -84,7 +87,10 @@ void DrawMistakes(int nMistakes, Gc* pgc)
 
 void DrawBoard(struct Game* pGame)
 {
-   gui_gc_setColorRGB(pGame->m_gc, 0, 250, 250);
+   /*pGame->m_R++%255;
+   pGame->m_G++%255;
+   pGame->m_B++%255;*/
+   gui_gc_setColorRGB(pGame->m_gc, pGame->m_R, pGame->m_G, pGame->m_B);
    gui_gc_fillRect(pGame->m_gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
    int nWidth = GetSquareWidth(pGame->m_Square);

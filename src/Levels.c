@@ -11,6 +11,8 @@ void LevelLoad(char* pstr, int nLevelNum)
    case 5: strcpy(pstr, LEVEL_5); break;
    case 6: strcpy(pstr, LEVEL_6); break;
    case 7: strcpy(pstr, LEVEL_7); break;
+   case 8: strcpy(pstr, LEVEL_8); break;
+   case 9: strcpy(pstr, LEVEL_9); break;
    case 19: strcpy(pstr, LEVEL_19); break;
    default: strcpy(pstr, LEVEL_33); break;
    }

@@ -18,6 +18,7 @@ struct Game
    struct Indicators* m_pIndicators;
    int m_bShouldQuit;
    Gc m_gc;
+   int m_R, m_G, m_B;
 };
 
 void CreateGame(struct Game** ppGame, const char* pstrLevelData);
