@@ -7,6 +7,8 @@
 #include "Selector.h"
 #include "Indicators.h"
 
+void DrawWin(struct Game* pGame);
+
 void CreateGame(struct Game** ppGame, const char* pstrLevelData)
 {
    *ppGame = malloc(sizeof(struct Game));
@@ -140,7 +142,28 @@ void DrawBoard(struct Game* pGame)
    //Draw mistakes
    DrawMistakes(GetSquareMistakes(pGame->m_Square), &pGame->m_gc);
 
+   if( IsSquareGameOver(pGame->m_Square) == SQUARELIB_GAMEOVER ) {
+      DrawWin(pGame);
+   }
+
    gui_gc_blit_to_screen(pGame->m_gc);
+}
+
+void DrawWin(struct Game* pGame)
+{
+   char buffer[32];
+   strcpy(buffer, "You Win!!!");
+   char bufferUnicode[32];
+   ascii2utf16(bufferUnicode, buffer, 32);
+
+   gui_gc_setFont(pGame->m_gc, Regular12);
+   int nWidth = gui_gc_getStringWidth(pGame->m_gc, Regular12, buffer, 0, 10/*strlen("You Win!!!")*/);
+   int nHeight = gui_gc_getStringHeight(pGame->m_gc, Regular12, buffer, 0, 10);
+
+   gui_gc_setColorRGB(pGame->m_gc, 255, 0, 0);
+   int x = (SCREEN_WIDTH - nWidth)/2;
+   int y = (SCREEN_HEIGHT - nHeight)/2;
+   gui_gc_drawString(pGame->m_gc, bufferUnicode, x, y, GC_SM_TOP);
 }
 
 int IsKeyPressed(const t_key key){
@@ -206,9 +229,6 @@ int GameLoop(struct Game* pGame)
          ToggleSquareMark(pGame->m_Square, nSelectionX, nSelectionY);
    }
 
-   if( IsSquareGameOver(pGame->m_Square) == SQUARELIB_GAMEOVER )
-      return 0;
-   
    return 1;
 }
 
