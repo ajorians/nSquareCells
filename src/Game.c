@@ -8,6 +8,7 @@
 #include "Indicators.h"
 
 void DrawWin(struct Game* pGame);
+void DrawStar(Gc* pgc, int x, int y, int a);
 
 void CreateGame(struct Game** ppGame, const char* pstrLevelData)
 {
@@ -149,6 +150,28 @@ void DrawBoard(struct Game* pGame)
    gui_gc_blit_to_screen(pGame->m_gc);
 }
 
+typedef struct {
+   unsigned int x;
+   unsigned int y;
+} point2D;
+void DrawStar(Gc* pgc, int x, int y, int a)
+{
+   point2D points[] = {{a/2.0+x, -0.16246*a+y},
+                   {0.190983*a+x, 0.0620541*a+y},
+                   {0.309017*a+x, 0.425325*a+y},
+                   {0+x, 0.200811*a+y},
+                   {-0.309017*a+x, 0.425325*a+y},
+                   {-0.190983*a+x, 0.0620541*a+y},
+                   {-a/2.0+x, -0.16246*a+y},
+                   {-0.118034*a+x, -0.16246*a+y},
+                   {0+x, -0.525731*a+y},
+                   {0.118034*a+x, -0.16246*a+y},
+                   {a/2.0+x, -0.16246*a+y}};
+
+   gui_gc_setColorRGB(*pgc, 255,215,0);
+   gui_gc_fillPoly(*pgc, (unsigned*)points, sizeof (points) / sizeof (points[0]));
+}
+
 void DrawWin(struct Game* pGame)
 {
    char buffer[32];
@@ -164,6 +187,23 @@ void DrawWin(struct Game* pGame)
    int x = (SCREEN_WIDTH - nWidth)/2;
    int y = (SCREEN_HEIGHT - nHeight)/2;
    gui_gc_drawString(pGame->m_gc, bufferUnicode, x, y, GC_SM_TOP);
+
+   int nStars;
+   int nMistakes = GetSquareMistakes(pGame->m_Square);
+   if( nMistakes == 0 ) {
+      nStars = 3;
+   } else if( nMistakes >= 1 && nMistakes <= 2 ) {
+      nStars = 2;
+   }
+   else {
+      nStars = 1;
+   }
+   int a = 55;
+   int nGapX = 5;
+   int nStarX = (SCREEN_WIDTH-((nStars-1)*(a+nGapX)))/2;
+   for(int i=0; i<nStars; i++) {
+      DrawStar(&pGame->m_gc, nStarX + (nGapX+a)*i, y+nHeight+(a/2), a);
+   }
 }
 
 int IsKeyPressed(const t_key key){
