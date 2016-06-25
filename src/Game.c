@@ -179,12 +179,6 @@ void DrawWin(struct Game* pGame)
       nStars = 1;
    }
    DrawStars(pGame->m_pStarDrawer, &pGame->m_gc, nStars, y+nHeight);
-   /*int a = 55;
-   int nGapX = 5;
-   int nStarX = (SCREEN_WIDTH-((nStars-1)*(a+nGapX)))/2;
-   for(int i=0; i<nStars; i++) {
-      DrawStar(&pGame->m_gc, nStarX + (nGapX+a)*i, y+nHeight+(a/2), a);
-   }*/
 }
 
 int IsKeyPressed(const t_key key){
