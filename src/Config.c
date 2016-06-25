@@ -18,8 +18,9 @@ void CreateConfig(struct Config** ppConfig)
    for(int i=0; i<nSettings; i++) {
       strcpy(strName, GetName(pConfig->m_Archive, "Settings", i));
 
+      char buffer[8];
+
       for(int nLevel = 0; nLevel<36; nLevel++) {
-         char buffer[8];
          sprintf(buffer, "Level%d", nLevel);
 
          if( strcmp(strName, buffer) == 0 ) {
@@ -27,20 +28,30 @@ void CreateConfig(struct Config** ppConfig)
             break;
          }
       }
+
+      sprintf(buffer, "DrawBkg");
+      if( strcmp(strName, buffer) == 0 ) {
+         pConfig->m_nDrawBackground = atoi( GetValue(pConfig->m_Archive, "Settings", i) );
+      }
    }
 }
 
 void FreeConfig(struct Config** ppConfig)
 {
+   char buffer[8];
+   char bufferName[8];
    struct Config* pConfig = *ppConfig;
    ArchiveSetBatchMode(pConfig->m_Archive, ARCHIVE_ENABLE_BATCH);
    for(int nLevel=0; nLevel<36; nLevel++) {
-      char buffer[8];
       sprintf(buffer, "%d", pConfig->m_Stars[nLevel]);
-      char bufferName[8];
       sprintf(bufferName, "Level%d", nLevel);
       UpdateArchiveEntry(pConfig->m_Archive, "Settings", bufferName, buffer, NULL);
    }
+
+   sprintf(buffer, "%d", pConfig->m_nDrawBackground);
+   sprintf(bufferName, "DrawBkg", pConfig->m_nDrawBackground);
+   UpdateArchiveEntry(pConfig->m_Archive, "Settings", bufferName, buffer, NULL);
+
    ArchiveSetBatchMode(pConfig->m_Archive, ARCHIVE_DISABLE_BATCH);
 
    ArchiveFree(&pConfig->m_Archive);
@@ -51,7 +62,7 @@ void FreeConfig(struct Config** ppConfig)
 
 void SetBeatLevel(struct Config* pConfig, int nLevelNum, int nStars)
 {
-   printf("Config: Level: %d Stars: %d\n", nLevelNum, nStars);
+   //printf("Config: Level: %d Stars: %d\n", nLevelNum, nStars);
    if( nLevelNum < 0 || nLevelNum >= 36 )
       return;
 
@@ -71,3 +82,12 @@ void GetBeatLevel(struct Config* pConfig, int nLevelNum, int* pnStars)
    }
 }
 
+int GetDrawBackground(struct Config* pConfig)
+{
+   return pConfig->m_nDrawBackground;
+}
+
+void SetDrawBackground(struct Config* pConfig, int nOn)
+{
+   pConfig->m_nDrawBackground = nOn;
+}

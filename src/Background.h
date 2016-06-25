@@ -2,6 +2,7 @@
 #define BACKGROUND_H
 
 #include <ngc.h>
+#include "Config.h"
 
 #define NUM_SQUARES	(15)
 
@@ -19,9 +20,10 @@ struct Square {
 struct Background
 {
    struct Square m_ArrSquares[NUM_SQUARES];
+   struct Config* m_pConfig;//Does not own
 };
 
-void CreateBackground(struct Background** ppBackground);
+void CreateBackground(struct Background** ppBackground, struct Config* pConfig);
 void FreeBackground(struct Background** ppBackground);
 void DrawBackground(struct Background* pBackground, Gc* pgc);
 

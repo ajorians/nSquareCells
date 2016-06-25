@@ -3,10 +3,11 @@
 
 #define MOVE_SPEED	(5)
 
-void CreateBackground(struct Background** ppBackground)
+void CreateBackground(struct Background** ppBackground, struct Config* pConfig)
 {
    *ppBackground = malloc(sizeof(struct Background));
    struct Background* pBackground = (*ppBackground);
+   pBackground->m_pConfig = pConfig;
    for(int i=0; i<NUM_SQUARES; i++) {
       struct Square* pSquare = &pBackground->m_ArrSquares[i];
       pSquare->x = rand()%SCREEN_WIDTH;
@@ -31,6 +32,9 @@ void DrawBackground(struct Background* pBackground, Gc* pgc)
 {
    gui_gc_setColorRGB(*pgc, 255, 255, 255);
    gui_gc_fillRect(*pgc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+   if( GetDrawBackground( pBackground->m_pConfig ) == 0 )
+      return;
 
    for(int i=0; i<NUM_SQUARES; i++) {
       struct Square* pSquare = &pBackground->m_ArrSquares[i];

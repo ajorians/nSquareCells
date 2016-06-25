@@ -12,7 +12,7 @@ void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum, struct Config* pCon
    pMenu->m_nLevelNum = nLevelNum >= 1 ? nLevelNum : 1;
 
    pMenu->m_pBackground = NULL;
-   CreateBackground(&pMenu->m_pBackground);
+   CreateBackground(&pMenu->m_pBackground, pConfig);
 
    pMenu->m_pConfig = pConfig;
 }
@@ -165,6 +165,11 @@ int MainMenuLoop(struct MainMenu* pMenu)
 int MainMenuShouldQuit(struct MainMenu* pMenu)
 {
    return pMenu->m_eChoice == Quit;
+}
+
+int MainMenuShowOptions(struct MainMenu* pMenu)
+{
+   return pMenu->m_eChoice == Options;
 }
 
 int MainMenuGetLevelNum(struct MainMenu* pMenu)

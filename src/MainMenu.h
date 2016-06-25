@@ -26,6 +26,7 @@ void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum, struct Config* pCon
 void FreeMainMenu(struct MainMenu** ppMenu);
 int MainMenuLoop(struct MainMenu* pMenu);
 int MainMenuShouldQuit(struct MainMenu* pMenu);
+int MainMenuShowOptions(struct MainMenu* pMenu);
 int MainMenuGetLevelNum(struct MainMenu* pMenu);
 
 #endif

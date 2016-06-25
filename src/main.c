@@ -4,6 +4,7 @@
 #include "Startup.h"
 #include "MainMenu.h"
 #include "Game.h"
+#include "Options.h"
 #include "Config.h"
 #include "Levels.h"
 
@@ -27,7 +28,8 @@ int main(int argc, char *argv[])
          CreateMainMenu(&pMenu, nLevelNumber, pConfig);
          while(MainMenuLoop(pMenu)){}
          bShouldQuit = MainMenuShouldQuit(pMenu);
-         if( bShouldQuit == 0 ) {
+         bShowOptions = MainMenuShowOptions(pMenu);
+         if( bShouldQuit == 0 && bShowOptions == 0 && bShowHelp == 0 ) {
             nLevelNumber = MainMenuGetLevelNum(pMenu);
             LevelLoad(strLevelData, nLevelNumber);
          }
@@ -40,6 +42,10 @@ int main(int argc, char *argv[])
       }
 
       if( bShowOptions ) {
+         struct Options* pOptions = NULL;
+         CreateOptions(&pOptions, pConfig);
+         while(OptionsLoop(pOptions)){}
+         FreeOptions(&pOptions);
          continue;
       }
       else if( bShowHelp ) {

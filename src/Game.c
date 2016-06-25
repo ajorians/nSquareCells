@@ -43,7 +43,7 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData, int nLevelNum, 
    CreateIndicators(&pGame->m_pIndicators, pGame->m_Square, pGame->m_pMetrics);
 
    pGame->m_pBackground = NULL;
-   CreateBackground(&pGame->m_pBackground);
+   CreateBackground(&pGame->m_pBackground, pConfig);
 
    pGame->m_pStarDrawer = NULL;
    CreateStarDrawer(&pGame->m_pStarDrawer);
