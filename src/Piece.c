@@ -73,7 +73,6 @@ void PieceDraw(struct Piece* pPiece, Gc* pgc)
 
    int nSpotValue = 0;
    if( SQUARELIB_HAS_VALUE == GetSpotNumber(pPiece->m_Square, pPiece->m_nX, pPiece->m_nY, &nSpotValue) ) {
-      gui_gc_setColorRGB(*pgc, 255, 255, 255);
       char buf[8];
       sprintf(buf, "%d", nSpotValue);
       char buffer[16];
