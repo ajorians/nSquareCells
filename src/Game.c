@@ -43,6 +43,9 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData)
    pGame->m_pBackground = NULL;
    CreateBackground(&pGame->m_pBackground);
 
+   pGame->m_pStarDrawer = NULL;
+   CreateStarDrawer(&pGame->m_pStarDrawer);
+
    pGame->m_bShouldQuit = 0;
 }
 
@@ -65,6 +68,7 @@ void FreeGame(struct Game** ppGame)
    FreeSelector(&pGame->m_pSelector);
    FreeIndicators(&pGame->m_pIndicators);
    FreeBackground(&pGame->m_pBackground);
+   FreeStarDrawer(&pGame->m_pStarDrawer);
 
    gui_gc_finish(pGame->m_gc);
 
@@ -148,28 +152,6 @@ void DrawBoard(struct Game* pGame)
    gui_gc_blit_to_screen(pGame->m_gc);
 }
 
-typedef struct {
-   unsigned int x;
-   unsigned int y;
-} point2D;
-void DrawStar(Gc* pgc, int x, int y, int a)
-{
-   point2D points[] = {{a/2.0+x, -0.16246*a+y},
-                   {0.190983*a+x, 0.0620541*a+y},
-                   {0.309017*a+x, 0.425325*a+y},
-                   {0+x, 0.200811*a+y},
-                   {-0.309017*a+x, 0.425325*a+y},
-                   {-0.190983*a+x, 0.0620541*a+y},
-                   {-a/2.0+x, -0.16246*a+y},
-                   {-0.118034*a+x, -0.16246*a+y},
-                   {0+x, -0.525731*a+y},
-                   {0.118034*a+x, -0.16246*a+y},
-                   {a/2.0+x, -0.16246*a+y}};
-
-   gui_gc_setColorRGB(*pgc, 255,215,0);
-   gui_gc_fillPoly(*pgc, (unsigned*)points, sizeof (points) / sizeof (points[0]));
-}
-
 void DrawWin(struct Game* pGame)
 {
    char buffer[32];
@@ -196,12 +178,13 @@ void DrawWin(struct Game* pGame)
    else {
       nStars = 1;
    }
-   int a = 55;
+   DrawStars(pGame->m_pStarDrawer, &pGame->m_gc, nStars, y+nHeight);
+   /*int a = 55;
    int nGapX = 5;
    int nStarX = (SCREEN_WIDTH-((nStars-1)*(a+nGapX)))/2;
    for(int i=0; i<nStars; i++) {
       DrawStar(&pGame->m_gc, nStarX + (nGapX+a)*i, y+nHeight+(a/2), a);
-   }
+   }*/
 }
 
 int IsKeyPressed(const t_key key){
