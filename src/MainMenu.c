@@ -172,6 +172,11 @@ int MainMenuShowOptions(struct MainMenu* pMenu)
    return pMenu->m_eChoice == Options;
 }
 
+int MainMenuShowHelp(struct MainMenu* pMenu)
+{
+   return pMenu->m_eChoice == Help;
+}
+
 int MainMenuGetLevelNum(struct MainMenu* pMenu)
 {
    return pMenu->m_nLevelNum;
