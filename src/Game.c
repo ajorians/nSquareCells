@@ -15,11 +15,9 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData)
    *ppGame = malloc(sizeof(struct Game));
    struct Game* pGame = *ppGame;
    SquareLibCreate(&(pGame->m_Square), pstrLevelData);
+   pGame->m_bWon = IsSquareGameOver(pGame->m_Square);
 
    pGame->m_gc = gui_gc_global_GC();
-   pGame->m_R = 242;
-   pGame->m_G = 242;
-   pGame->m_B = 242;
 
    gui_gc_begin(pGame->m_gc);
    pGame->m_pMetrics = NULL;
@@ -94,9 +92,6 @@ void DrawMistakes(int nMistakes, Gc* pgc)
 
 void DrawBoard(struct Game* pGame)
 {
-   /*pGame->m_R++%255;
-   pGame->m_G++%255;
-   pGame->m_B++%255;*/
    DrawBackground(pGame->m_pBackground, &pGame->m_gc);
 
    int nWidth = GetSquareWidth(pGame->m_Square);
@@ -146,7 +141,7 @@ void DrawBoard(struct Game* pGame)
    //Draw mistakes
    DrawMistakes(GetSquareMistakes(pGame->m_Square), &pGame->m_gc);
 
-   if( IsSquareGameOver(pGame->m_Square) == SQUARELIB_GAMEOVER ) {
+   if( pGame->m_bWon == SQUARELIB_GAMEOVER ) {
       DrawWin(pGame);
    }
 
@@ -229,31 +224,34 @@ int GameLoop(struct Game* pGame)
       pGame->m_bShouldQuit = 0;//Could change to completly close program
       return 0;
    }
-   else if( IsKeyPressed(KEY_NSPIRE_LEFT) ) {
+   else if( IsKeyPressed(KEY_NSPIRE_LEFT) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Left);
    }
-   else if( IsKeyPressed(KEY_NSPIRE_RIGHT) ) {
+   else if( IsKeyPressed(KEY_NSPIRE_RIGHT) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Right);
    }
-   else if( IsKeyPressed(KEY_NSPIRE_UP) ) {
+   else if( IsKeyPressed(KEY_NSPIRE_UP) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Up);
    }
-   else if( IsKeyPressed(KEY_NSPIRE_DOWN) ) {
+   else if( IsKeyPressed(KEY_NSPIRE_DOWN) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Down);
    }
-   else if( IsKeyPressed(KEY_NSPIRE_CTRL) ) {
+   else if( IsKeyPressed(KEY_NSPIRE_CTRL) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
 
       IsSquareMarked(pGame->m_Square, nSelectionX, nSelectionY, &nMarked);
       if( nMarked == SQUARELIB_NOT_MARKED ) {
 
          IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
-         if( nDestroyed == SQUARELIB_NOT_DESTROYED )
+         if( nDestroyed == SQUARELIB_NOT_DESTROYED ) {
             DestroySquare(pGame->m_Square, nSelectionX, nSelectionY);
+
+            pGame->m_bWon = IsSquareGameOver(pGame->m_Square);
+         }
 
          //Check if destroyed because if not you made a mistake
          IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
@@ -265,11 +263,13 @@ int GameLoop(struct Game* pGame)
 
       }
    }
-   else if( IsKeyPressed(KEY_NSPIRE_SHIFT) ) {
+   else if( IsKeyPressed(KEY_NSPIRE_SHIFT) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
-      if( nDestroyed == SQUARELIB_NOT_DESTROYED )
+      if( nDestroyed == SQUARELIB_NOT_DESTROYED ) {
          ToggleSquareMark(pGame->m_Square, nSelectionX, nSelectionY);
+         pGame->m_bWon = IsSquareGameOver(pGame->m_Square);
+      }
    }
 
    return 1;

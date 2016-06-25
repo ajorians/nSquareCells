@@ -13,13 +13,13 @@ struct Indicators;
 struct Game
 {
    SquareLib m_Square;
+   int m_bWon;
    struct Metrics* m_pMetrics;
    struct Piece* m_apPieces;
    struct Selector* m_pSelector;
    struct Indicators* m_pIndicators;
    int m_bShouldQuit;
    Gc m_gc;
-   int m_R, m_G, m_B;
    struct Background* m_pBackground;
 };
 
