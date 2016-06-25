@@ -1,6 +1,8 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
+#include "Background.h"
+
 //#define SHOW_LEVEL_DIMENSIONS
 
 enum MenuChoice
@@ -15,6 +17,7 @@ struct MainMenu
 {
    enum MenuChoice m_eChoice;
    int m_nLevelNum;
+   struct Background* m_pBackground;
 };
 
 void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum);

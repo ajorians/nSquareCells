@@ -9,10 +9,16 @@ void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum)
    struct MainMenu* pMenu = (*ppMenu);
    pMenu->m_eChoice = Play;
    pMenu->m_nLevelNum = nLevelNum >= 1 ? nLevelNum : 1;
+
+   pMenu->m_pBackground = NULL;
+   CreateBackground(&pMenu->m_pBackground);
 }
 
 void FreeMainMenu(struct MainMenu** ppMenu)
 {
+   struct MainMenu* pMenu = *ppMenu;
+   FreeBackground(&pMenu->m_pBackground);
+
    free(*ppMenu);
    *ppMenu = NULL;
 }
@@ -23,8 +29,9 @@ int MainMenuLoop(struct MainMenu* pMenu)
 
    gui_gc_begin(gc);
 
-   gui_gc_setColorRGB(gc, 250, 250, 250);
-   gui_gc_fillRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+   DrawBackground(pMenu->m_pBackground, &gc);
+   /*gui_gc_setColorRGB(gc, 250, 250, 250);
+   gui_gc_fillRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);*/
 
    gui_gc_setColorRGB(gc, 0, 0, 0);
 
