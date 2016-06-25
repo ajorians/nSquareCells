@@ -41,6 +41,16 @@ int main(int argc, char *argv[])
             break;
       }
       else {
+         FILE *fp = fopen(argv[1], "r");
+         if (!fp) { return 0; }
+         struct stat filestat;
+         if (stat(argv[1],&filestat) == -1) { fclose(fp); return 0; }
+
+         fread(strLevelData, 1, filestat.st_size, fp);
+
+         strLevelData[filestat.st_size] = 0;
+
+         fclose(fp);
       }
 
       if( bShowOptions ) {
@@ -66,6 +76,8 @@ int main(int argc, char *argv[])
          FreeGame(&pGame);
 
          if( bShouldQuit )
+            break;
+         if( nLevelNumber == -1 )
             break;
       }
    }

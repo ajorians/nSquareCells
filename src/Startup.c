@@ -6,7 +6,7 @@
 #include <os.h>
 
 #define NDLESS_CONFIG_FILE "/documents/ndless/ndless.cfg.tns"
-#define CONFIG_LINE "ext.squarecells=nSquareCells-gc"
+#define CONFIG_LINE "ext.sqc=nSquareCells-gc.prg"
 
 int config_file_already_written() {
     FILE *fp = fopen(NDLESS_CONFIG_FILE,"rb");
