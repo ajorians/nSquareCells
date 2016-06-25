@@ -5,6 +5,7 @@
 #include <ngc.h>
 #include "Background.h"
 #include "StarDrawer.h"
+#include "Config.h"
 
 struct Metrics;
 struct Piece;
@@ -14,6 +15,8 @@ struct Indicators;
 struct Game
 {
    SquareLib m_Square;
+   int m_nLevelNum;
+   struct Config* m_pConfig;//Does not own
    int m_bWon;
    struct Metrics* m_pMetrics;
    struct Piece* m_apPieces;
@@ -25,7 +28,7 @@ struct Game
    struct StarDrawer* m_pStarDrawer;
 };
 
-void CreateGame(struct Game** ppGame, const char* pstrLevelData);
+void CreateGame(struct Game** ppGame, const char* pstrLevelData, int nLevelNum, struct Config* pConfig);
 void FreeGame(struct Game** ppGame);
 int GameLoop(struct Game* pGame);
 int GameShouldQuit(struct Game* pMenu);

@@ -3,7 +3,7 @@ LD = nspire-ld
 GENZEHN = genzehn
 
 GCCFLAGS = -Os -Wall -W -marm -Wno-unused-parameter -I include
-LDFLAGS = -L lib -lndls -lSquare
+LDFLAGS = -L lib -lndls -lSquare -lArchive
 OBJCOPY := "$(shell which arm-elf-objcopy 2>/dev/null)"
 ifeq (${OBJCOPY},"")
 	OBJCOPY := arm-none-eabi-objcopy
@@ -19,6 +19,7 @@ all:	prepare $(EXE).prg.tns
 
 prepare:        
 	cd SquareLib; make; cd ..
+	cd ArchiveLib; make; cd ..
 	cd Tests; make; cd ..
 
 %.o: %.c
@@ -36,6 +37,7 @@ $(EXE).prg.tns: $(EXE).tns
 
 clean:
 	cd SquareLib; make clean
+	cd ArchiveLib; make clean
 	cd Tests; make clean
 	rm -rf lib
 	rm -f *.o *.elf

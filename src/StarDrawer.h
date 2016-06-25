@@ -3,6 +3,8 @@
 
 #include <ngc.h>
 
+void DrawStar(Gc* pgc, int x, int y, int a);
+
 struct StarDrawer
 {
    int arrStar[3];

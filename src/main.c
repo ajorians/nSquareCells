@@ -4,6 +4,7 @@
 #include "Startup.h"
 #include "MainMenu.h"
 #include "Game.h"
+#include "Config.h"
 #include "Levels.h"
 
 int main(int argc, char *argv[])
@@ -16,12 +17,14 @@ int main(int argc, char *argv[])
 
    int nLevelNumber = -1;
    char strLevelData[2048];
+   struct Config* pConfig = NULL;
+   CreateConfig(&pConfig);
    while(1) {
       int bShowHelp = 0, bShowOptions = 0;
       if( argc != 2 ) {
          struct MainMenu* pMenu = NULL;
          int bShouldQuit = 0;
-         CreateMainMenu(&pMenu, nLevelNumber);
+         CreateMainMenu(&pMenu, nLevelNumber, pConfig);
          while(MainMenuLoop(pMenu)){}
          bShouldQuit = MainMenuShouldQuit(pMenu);
          if( bShouldQuit == 0 ) {
@@ -45,7 +48,7 @@ int main(int argc, char *argv[])
       else {
          struct Game* pGame = NULL;
          int bShouldQuit = 0;
-         CreateGame(&pGame, strLevelData);
+         CreateGame(&pGame, strLevelData, nLevelNumber, pConfig);
          while(GameLoop(pGame)){}
          bShouldQuit = GameShouldQuit(pGame);
          FreeGame(&pGame);
@@ -54,6 +57,8 @@ int main(int argc, char *argv[])
             break;
       }
    }
+
+   FreeConfig(&pConfig);
 
    return 0;
 }

@@ -2,8 +2,9 @@
 #include <libndls.h>
 #include <ngc.h>
 #include "MainMenu.h"
+#include "StarDrawer.h"
 
-void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum)
+void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum, struct Config* pConfig)
 {
    *ppMenu = malloc(sizeof(struct MainMenu));
    struct MainMenu* pMenu = (*ppMenu);
@@ -12,12 +13,16 @@ void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum)
 
    pMenu->m_pBackground = NULL;
    CreateBackground(&pMenu->m_pBackground);
+
+   pMenu->m_pConfig = pConfig;
 }
 
 void FreeMainMenu(struct MainMenu** ppMenu)
 {
    struct MainMenu* pMenu = *ppMenu;
    FreeBackground(&pMenu->m_pBackground);
+
+   pMenu->m_pConfig = NULL;//Does not own
 
    free(*ppMenu);
    *ppMenu = NULL;
@@ -61,12 +66,19 @@ void DrawMenuPieces(struct MainMenu* pMenu, Gc* pgc)
       int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
 
          int nXOffset = nMinPieceDim/2 - nWidthSpaceDesired/2;
-         int nYOffset = 3;
+         int nYOffset = 2;
 
          int nPosX = nPieceX + nXOffset;
          int nPosY = nPieceY + nYOffset;
 
          gui_gc_drawString(*pgc, buffer, nPosX, nPosY, GC_SM_TOP);
+
+         int nStars = 0;
+         GetBeatLevel(pMenu->m_pConfig, nLevelNum-1, &nStars);
+         int a = nMinPieceDim/3;
+         for(int nStarsToDraw=0; nStarsToDraw<nStars; nStarsToDraw++) {
+            DrawStar(pgc, nPieceX+nStarsToDraw*a+a/2+1, nPosY+nMinPieceDim-a, a);
+         }
       }
    }
 }

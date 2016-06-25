@@ -8,13 +8,15 @@
 #include "Indicators.h"
 
 void DrawWin(struct Game* pGame);
-void DrawStar(Gc* pgc, int x, int y, int a);
+int GetStarCount(struct Game* pGame);
 
-void CreateGame(struct Game** ppGame, const char* pstrLevelData)
+void CreateGame(struct Game** ppGame, const char* pstrLevelData, int nLevelNum, struct Config* pConfig)
 {
    *ppGame = malloc(sizeof(struct Game));
    struct Game* pGame = *ppGame;
    SquareLibCreate(&(pGame->m_Square), pstrLevelData);
+   pGame->m_nLevelNum = nLevelNum;
+   pGame->m_pConfig = pConfig;
    pGame->m_bWon = IsSquareGameOver(pGame->m_Square);
 
    pGame->m_gc = gui_gc_global_GC();
@@ -69,6 +71,8 @@ void FreeGame(struct Game** ppGame)
    FreeIndicators(&pGame->m_pIndicators);
    FreeBackground(&pGame->m_pBackground);
    FreeStarDrawer(&pGame->m_pStarDrawer);
+
+   pGame->m_pConfig = NULL;//Does not own
 
    gui_gc_finish(pGame->m_gc);
 
@@ -152,6 +156,21 @@ void DrawBoard(struct Game* pGame)
    gui_gc_blit_to_screen(pGame->m_gc);
 }
 
+int GetStarCount(struct Game* pGame)
+{
+   int nStars;
+   int nMistakes = GetSquareMistakes(pGame->m_Square);
+   if( nMistakes == 0 ) {
+      nStars = 3;
+   } else if( nMistakes >= 1 && nMistakes <= 2 ) {
+      nStars = 2;
+   }
+   else {
+      nStars = 1;
+   }
+   return nStars;
+}
+
 void DrawWin(struct Game* pGame)
 {
    char buffer[32];
@@ -168,16 +187,7 @@ void DrawWin(struct Game* pGame)
    int y = (SCREEN_HEIGHT - nHeight)/2;
    gui_gc_drawString(pGame->m_gc, bufferUnicode, x, y, GC_SM_TOP);
 
-   int nStars;
-   int nMistakes = GetSquareMistakes(pGame->m_Square);
-   if( nMistakes == 0 ) {
-      nStars = 3;
-   } else if( nMistakes >= 1 && nMistakes <= 2 ) {
-      nStars = 2;
-   }
-   else {
-      nStars = 1;
-   }
+   int nStars = GetStarCount(pGame);
    DrawStars(pGame->m_pStarDrawer, &pGame->m_gc, nStars, y+nHeight);
 }
 
@@ -188,6 +198,14 @@ int IsKeyPressed(const t_key key){
    while( isKeyPressed(key) ){}
 
    return 1;
+}
+
+void UpdateGameWon(struct Game* pGame)
+{
+   if( pGame->m_bWon && pGame->m_nLevelNum > 0 && pGame->m_nLevelNum <= 36 ) {
+      int nStars = GetStarCount(pGame);
+      SetBeatLevel(pGame->m_pConfig, pGame->m_nLevelNum-1/*To 0-base*/, nStars);
+   }
 }
 
 int GameLoop(struct Game* pGame)
@@ -228,6 +246,8 @@ int GameLoop(struct Game* pGame)
             DestroySquare(pGame->m_Square, nSelectionX, nSelectionY);
 
             pGame->m_bWon = IsSquareGameOver(pGame->m_Square);
+            if( pGame->m_bWon )
+               UpdateGameWon( pGame );
          }
 
          //Check if destroyed because if not you made a mistake
@@ -246,6 +266,9 @@ int GameLoop(struct Game* pGame)
       if( nDestroyed == SQUARELIB_NOT_DESTROYED ) {
          ToggleSquareMark(pGame->m_Square, nSelectionX, nSelectionY);
          pGame->m_bWon = IsSquareGameOver(pGame->m_Square);
+         if( pGame->m_bWon ) {
+            UpdateGameWon( pGame );
+         }
       }
    }
 
