@@ -42,6 +42,9 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData)
    pGame->m_pIndicators = NULL;
    CreateIndicators(&pGame->m_pIndicators, pGame->m_Square, pGame->m_pMetrics);
 
+   pGame->m_pBackground = NULL;
+   CreateBackground(&pGame->m_pBackground);
+
    pGame->m_bShouldQuit = 0;
 }
 
@@ -63,6 +66,7 @@ void FreeGame(struct Game** ppGame)
 
    FreeSelector(&pGame->m_pSelector);
    FreeIndicators(&pGame->m_pIndicators);
+   FreeBackground(&pGame->m_pBackground);
 
    gui_gc_finish(pGame->m_gc);
 
@@ -93,8 +97,7 @@ void DrawBoard(struct Game* pGame)
    /*pGame->m_R++%255;
    pGame->m_G++%255;
    pGame->m_B++%255;*/
-   gui_gc_setColorRGB(pGame->m_gc, pGame->m_R, pGame->m_G, pGame->m_B);
-   gui_gc_fillRect(pGame->m_gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+   DrawBackground(pGame->m_pBackground, &pGame->m_gc);
 
    int nWidth = GetSquareWidth(pGame->m_Square);
    int nHeight = GetSquareHeight(pGame->m_Square);

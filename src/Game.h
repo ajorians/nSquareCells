@@ -3,6 +3,7 @@
 
 #include <SquareLib/SquareLib.h>
 #include <ngc.h>
+#include "Background.h"
 
 struct Metrics;
 struct Piece;
@@ -19,6 +20,7 @@ struct Game
    int m_bShouldQuit;
    Gc m_gc;
    int m_R, m_G, m_B;
+   struct Background* m_pBackground;
 };
 
 void CreateGame(struct Game** ppGame, const char* pstrLevelData);
