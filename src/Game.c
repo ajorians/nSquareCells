@@ -28,11 +28,23 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData, int nLevelNum, 
    int nWidth = GetSquareWidth(pGame->m_Square);
    int nHeight = GetSquareHeight(pGame->m_Square);
    int nNumPtrs = nWidth * nHeight;
+   int nColorIndex = 0;
+   if( nLevelNum >= 7 && nLevelNum < 13 ) {
+      nColorIndex = 1;
+   } else if( nLevelNum >= 13 && nLevelNum < 19 ) {
+      nColorIndex = 2;
+   } else if( nLevelNum >= 19 && nLevelNum < 25 ) {
+      nColorIndex = 3;
+   } else if( nLevelNum >= 25 && nLevelNum < 30 ) {
+      nColorIndex = 4;
+   } else if( nLevelNum >= 30 ) {
+      nColorIndex = 5;
+   }
    pGame->m_apPieces = malloc(nNumPtrs*sizeof(struct Piece));
    for(int x=0; x<nWidth; x++) {
       for(int y=0; y<nHeight; y++) {
          struct Piece* pPiece = &pGame->m_apPieces[x+y*nWidth];
-         CreatePiece(pPiece, x, y, pGame->m_Square, pGame->m_pMetrics);
+         CreatePiece(pPiece, x, y, pGame->m_Square, pGame->m_pMetrics, nColorIndex);
       }
    }
 

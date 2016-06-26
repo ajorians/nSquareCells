@@ -3,13 +3,39 @@
 #include <libndls.h>
 #include "Metrics.h"
 
-void CreatePiece(struct Piece* pPiece, int x, int y, SquareLib pSquare, struct Metrics* pMetrics)
+typedef struct
+{
+   int r;
+   int g;
+   int b;
+} LevelColors;
+
+LevelColors g_Colors[] = {
+   {0xFF, 0xBF, 0x00},
+   {0x00, 0xB1, 0xFF},
+   {0xFE, 0x00, 0x1A},
+   {0x00, 0xD9, 0xB6},
+   {0x00, 0x75, 0xFE},
+   {0xFF, 0x01, 0x98}
+};
+
+LevelColors g_SelectedColors[] = {
+   {0xFF, 0xD1, 0x48},
+   {0x00, 0xB1, 0xFC},
+   {0xF8, 0x4D, 0x58},
+   {0x00, 0xDC, 0xB0},
+   {0x47, 0x9C, 0xFE},
+   {0xFD, 0x00, 0x9A}
+};
+
+void CreatePiece(struct Piece* pPiece, int x, int y, SquareLib pSquare, struct Metrics* pMetrics, int nColorIndex)
 {
    pPiece->m_nX = x;
    pPiece->m_nY = y;
    pPiece->m_nPieceMistaken = 0;
    pPiece->m_pMetrics = pMetrics;
    pPiece->m_Square = pSquare;
+   pPiece->m_nColorIndex = nColorIndex;
 }
 
 void FreePiece(struct Piece* pPiece)
@@ -59,12 +85,14 @@ void PieceDraw(struct Piece* pPiece, Gc* pgc)
    gui_gc_setColorRGB(*pgc, 255, 255, 255);
    gui_gc_drawRect(*pgc, nPieceX + 1, nPieceY + 1, nPieceDim-2, nPieceDim-2);
 
-   gui_gc_setColorRGB(*pgc, 0, 220, 0);
+   LevelColors clr = g_Colors[pPiece->m_nColorIndex];
+   gui_gc_setColorRGB(*pgc, clr.r, clr.g, clr.b);
    gui_gc_fillRect(*pgc, nPieceX + 2, nPieceY + 2, nPieceDim-3, nPieceDim-3);
 
    IsSquareMarked(pPiece->m_Square, pPiece->m_nX, pPiece->m_nY, &nMarked);
    if( nMarked == SQUARELIB_MARKED ) {
-      gui_gc_setColorRGB(*pgc, 0, 175, 0);
+      LevelColors clrSel = g_SelectedColors[pPiece->m_nColorIndex];
+      gui_gc_setColorRGB(*pgc, clrSel.r, clrSel.g, clrSel.b);
       gui_gc_fillRect(*pgc, nPieceX + 2, nPieceY + nPieceDim/2 + 2, nPieceDim-3, nPieceDim/2-3);
 
       gui_gc_setColorRGB(*pgc, 255, 255, 255);
