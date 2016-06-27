@@ -93,7 +93,7 @@ void PieceDraw(struct Piece* pPiece, Gc* pgc)
    if( nMarked == SQUARELIB_MARKED ) {
       LevelColors clrSel = g_SelectedColors[pPiece->m_nColorIndex];
       gui_gc_setColorRGB(*pgc, clrSel.r, clrSel.g, clrSel.b);
-      gui_gc_fillRect(*pgc, nPieceX + 2, nPieceY + nPieceDim/2 + 2, nPieceDim-3, nPieceDim/2-3);
+      gui_gc_fillRect(*pgc, nPieceX + 2, nPieceY + 2, nPieceDim-3, nPieceDim/2-3);
 
       gui_gc_setColorRGB(*pgc, 255, 255, 255);
       gui_gc_fillRect(*pgc, nPieceX + nPieceDim - 12, nPieceY + 4, 6, 6);
