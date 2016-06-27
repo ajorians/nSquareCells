@@ -3,6 +3,7 @@
 #include <ngc.h>
 #include "MainMenu.h"
 #include "StarDrawer.h"
+#include "LevelColors.h"
 
 void CreateMainMenu(struct MainMenu** ppMenu, int nLevelNum, struct Config* pConfig)
 {
@@ -49,23 +50,32 @@ void DrawMenuPieces(struct MainMenu* pMenu, Gc* pgc)
          int nLevelNum = nY*nDimensionSize + nX + 1/*0-based to 1-based*/;
 
          int bCurrentRow = 0;
+         int nColorIndex = 0;
          if( pMenu->m_eChoice == Play ) {
             if( pMenu->m_nLevelNum >= 1 && pMenu->m_nLevelNum <= 6 && nLevelNum >= 1 && nLevelNum <= 6 ) {
+               nColorIndex = 0;
                bCurrentRow = 1;
             } else if( pMenu->m_nLevelNum >= 7 && pMenu->m_nLevelNum <= 12 && nLevelNum >= 7 && nLevelNum <= 12 ) {
+               nColorIndex = 1;
                bCurrentRow = 1;
             } else if( pMenu->m_nLevelNum >= 13 && pMenu->m_nLevelNum <= 18 && nLevelNum >= 13 && nLevelNum <= 18 ) {
+               nColorIndex = 2;
                bCurrentRow = 1;
             } else if( pMenu->m_nLevelNum >= 19 && pMenu->m_nLevelNum <= 24 && nLevelNum >= 19 && nLevelNum <= 24 ) {
+               nColorIndex = 3;
                bCurrentRow = 1;
             } else if( pMenu->m_nLevelNum >= 25 && pMenu->m_nLevelNum <= 30 && nLevelNum >= 25 && nLevelNum <= 30 ) {
+               nColorIndex = 4;
                bCurrentRow = 1;
             } else if( pMenu->m_nLevelNum >= 31 && nLevelNum >= 31 ) {
+               nColorIndex = 5;
                bCurrentRow = 1;
             }
          }
          if( bCurrentRow == 1 ) {
-            gui_gc_setColorRGB(*pgc, 0, 220, 0);
+            LevelColors clr = g_Colors[nColorIndex];
+            gui_gc_setColorRGB(*pgc, clr.r, clr.g, clr.b);
+            //gui_gc_setColorRGB(*pgc, 0, 220, 0);
          } else {
             gui_gc_setColorRGB(*pgc, 0x59, 0x59, 0x59);
          }
