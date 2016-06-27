@@ -9,7 +9,7 @@ void CreateStarDrawer(struct StarDrawer** ppDrawer)
    struct StarDrawer* pDrawer = (*ppDrawer);
    pDrawer->arrStar[0] = 125;
    pDrawer->arrStar[1] = pDrawer->arrStar[0] + STAR_LENGTH;
-   pDrawer->arrStar[2] = pDrawer->arrStar[1] + 2*STAR_LENGTH;
+   pDrawer->arrStar[2] = pDrawer->arrStar[1] + STAR_LENGTH;
 }
 
 void FreeStarDrawer(struct StarDrawer** ppDrawer)
