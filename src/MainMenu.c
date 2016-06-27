@@ -46,10 +46,31 @@ void DrawMenuPieces(struct MainMenu* pMenu, Gc* pgc)
          int nPieceX = x + nX*nMinPieceDim;
          int nPieceY = y + nY*nMinPieceDim;
 
-         gui_gc_setColorRGB(*pgc, 0, 220, 0);
+         int nLevelNum = nY*nDimensionSize + nX + 1/*0-based to 1-based*/;
+
+         int bCurrentRow = 0;
+         if( pMenu->m_eChoice == Play ) {
+            if( pMenu->m_nLevelNum >= 1 && pMenu->m_nLevelNum <= 6 && nLevelNum >= 1 && nLevelNum <= 6 ) {
+               bCurrentRow = 1;
+            } else if( pMenu->m_nLevelNum >= 7 && pMenu->m_nLevelNum <= 12 && nLevelNum >= 7 && nLevelNum <= 12 ) {
+               bCurrentRow = 1;
+            } else if( pMenu->m_nLevelNum >= 13 && pMenu->m_nLevelNum <= 18 && nLevelNum >= 13 && nLevelNum <= 18 ) {
+               bCurrentRow = 1;
+            } else if( pMenu->m_nLevelNum >= 19 && pMenu->m_nLevelNum <= 24 && nLevelNum >= 19 && nLevelNum <= 24 ) {
+               bCurrentRow = 1;
+            } else if( pMenu->m_nLevelNum >= 25 && pMenu->m_nLevelNum <= 30 && nLevelNum >= 25 && nLevelNum <= 30 ) {
+               bCurrentRow = 1;
+            } else if( pMenu->m_nLevelNum >= 31 && nLevelNum >= 31 ) {
+               bCurrentRow = 1;
+            }
+         }
+         if( bCurrentRow == 1 ) {
+            gui_gc_setColorRGB(*pgc, 0, 220, 0);
+         } else {
+            gui_gc_setColorRGB(*pgc, 0x59, 0x59, 0x59);
+         }
          gui_gc_fillRect(*pgc, nPieceX + 2, nPieceY + 2, nMinPieceDim-3, nMinPieceDim-3);
 
-         int nLevelNum = nY*nDimensionSize + nX + 1/*0-based to 1-based*/;
          if( pMenu->m_eChoice == Play && pMenu->m_nLevelNum == nLevelNum ) {
             gui_gc_setColorRGB(*pgc, 255, 0, 0);
 
