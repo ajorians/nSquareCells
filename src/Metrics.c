@@ -18,7 +18,7 @@ void CreateMetrics(struct Metrics** ppMetrics, SquareLib square, Gc* pgc)
       if( nIndicators > pMetrics->m_nMaxColIndicators )
          pMetrics->m_nMaxColIndicators = nIndicators;
    }
-   printf("Max col indicators: %d\n", pMetrics->m_nMaxColIndicators);
+   //printf("Max col indicators: %d\n", pMetrics->m_nMaxColIndicators);
 
    pMetrics->m_nMaxRowIndicators = 0;
    for(int y=0; y<nHeight; y++) {
@@ -26,7 +26,7 @@ void CreateMetrics(struct Metrics** ppMetrics, SquareLib square, Gc* pgc)
       if( nIndicators > pMetrics->m_nMaxRowIndicators )
          pMetrics->m_nMaxRowIndicators = nIndicators;
    }
-   printf("Max row indicators: %d\n", pMetrics->m_nMaxRowIndicators);
+   //printf("Max row indicators: %d\n", pMetrics->m_nMaxRowIndicators);
 
    char buffer[16];
    char buf[8];
@@ -41,22 +41,22 @@ void CreateMetrics(struct Metrics** ppMetrics, SquareLib square, Gc* pgc)
    const int nGapVertically = 4;
    int nIndicatorSpaceNeededHorizontally = pMetrics->m_nMaxRowIndicators * nWidthPerChar;
    int nSpaceAvailableHorizontally = SCREEN_WIDTH - nGapHorizontally - nIndicatorSpaceNeededHorizontally;
-   printf("Space available Horizontall: %d\n", nSpaceAvailableHorizontally);
+   //printf("Space available Horizontall: %d\n", nSpaceAvailableHorizontally);
 
    int nHeightPerChar = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
-   printf("HeightPerChar: %d\n", nHeightPerChar);
+   //printf("HeightPerChar: %d\n", nHeightPerChar);
    const int nIndicatorGapVertically = 3;
    int nIndicatorSpaceNeededVertically = pMetrics->m_nMaxColIndicators * nHeightPerChar + nIndicatorGapVertically;
-   printf("IndicatorSpaceNeededVertically: %d\n", nIndicatorSpaceNeededVertically);
+   //printf("IndicatorSpaceNeededVertically: %d\n", nIndicatorSpaceNeededVertically);
    int nSpaceAvailableVertically = SCREEN_HEIGHT - nGapVertically - nIndicatorSpaceNeededVertically;
-   printf("Space available vertically: %d\n", nSpaceAvailableVertically);
+   //printf("Space available vertically: %d\n", nSpaceAvailableVertically);
 
    int nMinSpaceAvailable = nSpaceAvailableHorizontally < nSpaceAvailableVertically ? nSpaceAvailableHorizontally - (nWidth-1) : nSpaceAvailableVertically - (nHeight-1);
 
    int nPieceWidth = nMinSpaceAvailable / nWidth;
    int nPieceHeight = nSpaceAvailableVertically / nHeight;
    pMetrics->m_nPieceDim = nPieceWidth < nPieceHeight ? nPieceWidth : nPieceHeight;
-   printf("PieceDim: %d\n", pMetrics->m_nPieceDim);
+   //printf("PieceDim: %d\n", pMetrics->m_nPieceDim);
 
    int nBoardDim = ((pMetrics->m_nPieceDim * nWidth) > (pMetrics->m_nPieceDim * nHeight)) ? pMetrics->m_nPieceDim * nWidth : pMetrics->m_nPieceDim * nHeight;
 

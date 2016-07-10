@@ -373,7 +373,7 @@ int DestroySquare(SquareLib api, int nX, int nY)
 
    struct Cell* pCell = GetAt(pS->m_pBoard, nX, nY);
    if( pCell->m_bIsBomb ) {
-      printf("Attempted to destroy cell that is a bomb: %d,%d\n", nX, nY);
+      DEBUG_MSG("Attempted to destroy cell that is a bomb: %d,%d\n", nX, nY);
       pS->m_nMistakesMade++;
       pCell->m_eMarked = Marked;
    }
