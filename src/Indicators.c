@@ -54,12 +54,6 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
          ascii2utf16(buffer, buf, 16);
          int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
          int nHeightSpaceDesired = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
-         static int n = 0;
-         if( n == 0 )
-         {
-            printf("nHeightSpaceDesired: %d\n", nHeightSpaceDesired);
-            n++;
-         }
          int nPosX = nLeftBoard + x*nPieceDim + (nPieceDim-nWidthSpaceDesired)/2;
          int nPosY = nTop + (i+nIndicatorOffset)*nHeightSpaceDesired;
 
@@ -79,21 +73,22 @@ void IndicatorsDraw(struct Indicators* pIndicators, Gc* pgc)
       int nIndicators = GetSquareIndicatorsForRow(pIndicators->m_Square, y, arr);
       int nIndicatorOffset = nMaxRowIndicators - nIndicators;
       enum IndicatorType eType;
+      int nLeftIndicator = nLeftBoard;
       GetSquareIndicatorTypeRow(pIndicators->m_Square, y, &eType);
-      for(int i=0; i<nIndicators; i++) {
+      for(int i=nIndicators-1; i>-1; i--) {
          char buf[8];
          if( eType == FullNumbers )
             sprintf(buf, "[%d]", arr[i]);
          else
             sprintf(buf, "%d", arr[i]);
+         int nLength = strlen(buf);
          char buffer[16];
          ascii2utf16(buffer, buf, 16);
-         int nHeightSpaceDesired = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
+         int nHeightSpaceDesired = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buffer, 0, 1);
          const int nHorizontalSpacing = 3;
-         int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1) + nHorizontalSpacing;
-         int nPosX = nLeft + (i+nIndicatorOffset)*nWidthSpaceDesired;
-         if( eType == FullNumbers )
-            nPosX = nLeftBoard - nWidthSpaceDesired - 2;
+         int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buffer, 0, nLength) + nHorizontalSpacing;
+         int nPosX = nLeftIndicator - nWidthSpaceDesired;
+         nLeftIndicator = nPosX;
          int nPosY = nTopBoard + y*nPieceDim + (nPieceDim-nHeightSpaceDesired)/2;
 
          if( SQUARELIB_INDICATOR_ENABLED == GetSquareIndicatorEnabledForRow(pIndicators->m_Square, y, i) ) {

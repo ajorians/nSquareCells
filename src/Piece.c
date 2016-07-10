@@ -81,9 +81,10 @@ void PieceDraw(struct Piece* pPiece, Gc* pgc)
       sprintf(buf, "%d", nSpotValue);
       char buffer[16];
       ascii2utf16(buffer, buf, 16);
+      int nLength = strlen(buf);
 
-      int nHeightSpaceDesired = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
-      int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buf, 0, 1);
+      int nHeightSpaceDesired = gui_gc_getStringSmallHeight(*pgc, gui_gc_getFont(*pgc), buffer, 0, 1);
+      int nWidthSpaceDesired = gui_gc_getStringWidth(*pgc, gui_gc_getFont(*pgc), buffer, 0, nLength);
 
       int nXOffset = nPieceDim/2 - nWidthSpaceDesired/2;
       int nYOffset = nPieceDim/2 - nHeightSpaceDesired/2;

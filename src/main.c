@@ -11,6 +11,7 @@
 
 int main(int argc, char *argv[])
 {
+   ArchiveSetCurrentDirectory( argv[0] );
    if( argc != 2 ) {
       if( !config_file_already_written() ) {
          write_config_file();

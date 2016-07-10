@@ -92,7 +92,7 @@ void FreeGame(struct Game** ppGame)
    *ppGame = NULL;
 }
 
-void DrawMistakes(int nMistakes, Gc* pgc)
+void DrawMistakes(int nMistakes, Gc* pgc, int nX)
 {
    if( nMistakes <= 0 )
       return;
@@ -102,7 +102,7 @@ void DrawMistakes(int nMistakes, Gc* pgc)
    int nSquaresToDraw = nMistakes;
    if( nMistakes > 5 ) nSquaresToDraw = 5;
 
-   int nX = 22, nY = 28;
+   int nY = 28;
    for(int i=0; i<nSquaresToDraw; i++) {
       gui_gc_fillRect(*pgc, nX, nY, nSquareSize, nSquareSize);
       nX += nSquareSize;
@@ -158,8 +158,12 @@ void DrawBoard(struct Game* pGame)
    ascii2utf16(bufferUnicode, buffer, 32);
    gui_gc_drawString(pGame->m_gc, bufferUnicode, 10, 23, GC_SM_TOP);
 
+   int nLength = strlen(buffer);
+   int nWidthSpaceDesired = gui_gc_getStringWidth(pGame->m_gc, gui_gc_getFont(pGame->m_gc), bufferUnicode, 0, nLength);
+   int nLeft = 10 + nWidthSpaceDesired;
+
    //Draw mistakes
-   DrawMistakes(GetSquareMistakes(pGame->m_Square), &pGame->m_gc);
+   DrawMistakes(GetSquareMistakes(pGame->m_Square), &pGame->m_gc, nLeft);
 
    if( pGame->m_bWon == SQUARELIB_GAMEOVER ) {
       DrawWin(pGame);
