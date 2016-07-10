@@ -151,19 +151,19 @@ int MainMenuLoop(struct MainMenu* pMenu)
       pMenu->m_eChoice = Quit;
       return 0;
    }
-   if( isKeyPressed(KEY_NSPIRE_UP) && ( pMenu->m_eChoice == Options || pMenu->m_eChoice == Help ) ) {
+   if( ( isKeyPressed(KEY_NSPIRE_UP) || isKeyPressed(KEY_NSPIRE_8) ) && ( pMenu->m_eChoice == Options || pMenu->m_eChoice == Help ) ) {
       wait_no_key_pressed();
       pMenu->m_eChoice = Play;
    }
-   else if( isKeyPressed(KEY_NSPIRE_UP) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum > 6 ) {
+   else if( ( isKeyPressed(KEY_NSPIRE_UP) || isKeyPressed(KEY_NSPIRE_8) ) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum > 6 ) {
       wait_no_key_pressed();
       pMenu->m_nLevelNum -= 6;
    }
-   else if( isKeyPressed(KEY_NSPIRE_DOWN) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum >= 31 && pMenu->m_nLevelNum <= 36 ) {
+   else if( ( isKeyPressed(KEY_NSPIRE_DOWN) || isKeyPressed(KEY_NSPIRE_2) ) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum >= 31 && pMenu->m_nLevelNum <= 36 ) {
       wait_no_key_pressed();
       pMenu->m_eChoice = Options;
    }
-   else if( isKeyPressed(KEY_NSPIRE_DOWN) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum < 31 ) {
+   else if( ( isKeyPressed(KEY_NSPIRE_DOWN) || isKeyPressed(KEY_NSPIRE_2) ) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum < 31 ) {
       wait_no_key_pressed();
       pMenu->m_nLevelNum += 6;
    }
@@ -173,19 +173,19 @@ int MainMenuLoop(struct MainMenu* pMenu)
       return 0;
    }
 
-   if( isKeyPressed(KEY_NSPIRE_LEFT) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum > 1 ) {
+   if( ( isKeyPressed(KEY_NSPIRE_LEFT) || isKeyPressed(KEY_NSPIRE_4) ) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum > 1 ) {
       wait_no_key_pressed();
       pMenu->m_nLevelNum--;
    }
-   else if( isKeyPressed(KEY_NSPIRE_LEFT) && pMenu->m_eChoice == Help ) {
+   else if( ( isKeyPressed(KEY_NSPIRE_LEFT) || isKeyPressed(KEY_NSPIRE_4) ) && pMenu->m_eChoice == Help ) {
       wait_no_key_pressed();
       pMenu->m_eChoice = Options;
    }
-   else if( isKeyPressed(KEY_NSPIRE_RIGHT) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum < 36 ) {
+   else if( ( isKeyPressed(KEY_NSPIRE_RIGHT) || isKeyPressed(KEY_NSPIRE_6) ) && pMenu->m_eChoice == Play && pMenu->m_nLevelNum < 36 ) {
       wait_no_key_pressed();
       pMenu->m_nLevelNum++;
    }
-   else if( isKeyPressed(KEY_NSPIRE_RIGHT) && pMenu->m_eChoice == Options ) {
+   else if( ( isKeyPressed(KEY_NSPIRE_RIGHT) || isKeyPressed(KEY_NSPIRE_6) ) && pMenu->m_eChoice == Options ) {
       wait_no_key_pressed();
       pMenu->m_eChoice = Help;
    }
