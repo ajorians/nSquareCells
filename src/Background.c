@@ -1,7 +1,7 @@
 #include <os.h>
 #include "Background.h"
 
-#define MOVE_SPEED	(5)
+#define MOVE_SPEED	(1)
 
 void CreateBackground(struct Background** ppBackground, struct Config* pConfig)
 {

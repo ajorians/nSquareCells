@@ -195,8 +195,8 @@ void DrawWin(struct Game* pGame)
    ascii2utf16(bufferUnicode, buffer, 32);
 
    gui_gc_setFont(pGame->m_gc, Regular12);
-   int nWidth = gui_gc_getStringWidth(pGame->m_gc, Regular12, buffer, 0, 10/*strlen("You Win!!!")*/);
-   int nHeight = gui_gc_getStringHeight(pGame->m_gc, Regular12, buffer, 0, 10);
+   int nWidth = gui_gc_getStringWidth(pGame->m_gc, Regular12, bufferUnicode, 0, 10/*strlen("You Win!!!")*/);
+   int nHeight = gui_gc_getStringHeight(pGame->m_gc, Regular12, bufferUnicode, 0, 10);
 
    gui_gc_setColorRGB(pGame->m_gc, 255, 0, 0);
    int x = (SCREEN_WIDTH - nWidth)/2;
