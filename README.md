@@ -14,7 +14,7 @@ Start up TI-NSpire Student Software or whatever you use to put it on the calcula
 How to play:
 
 Source:
-I included my source.  I programmed with C++ and used nGC as well as the ndlesss Software Development Kit.
+I included my source.  I programmed with C and used nGC as well as the ndlesss Software Development Kit.
 
 Contact Me:
 A.J. Orians

@@ -35,9 +35,9 @@ void CreateGame(struct Game** ppGame, const char* pstrLevelData, int nLevelNum, 
       nColorIndex = 2;
    } else if( nLevelNum >= 19 && nLevelNum < 25 ) {
       nColorIndex = 3;
-   } else if( nLevelNum >= 25 && nLevelNum < 30 ) {
+   } else if( nLevelNum >= 25 && nLevelNum < 31 ) {
       nColorIndex = 4;
-   } else if( nLevelNum >= 30 ) {
+   } else if( nLevelNum >= 31 ) {
       nColorIndex = 5;
    }
    pGame->m_apPieces = malloc(nNumPtrs*sizeof(struct Piece));
@@ -231,19 +231,19 @@ int GameLoop(struct Game* pGame)
       pGame->m_bShouldQuit = 0;//Could change to completly close program
       return 0;
    }
-   else if( IsKeyPressed(KEY_NSPIRE_LEFT) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
+   else if( ( IsKeyPressed(KEY_NSPIRE_LEFT) || IsKeyPressed(KEY_NSPIRE_4) ) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Left);
    }
-   else if( IsKeyPressed(KEY_NSPIRE_RIGHT) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
+   else if( ( IsKeyPressed(KEY_NSPIRE_RIGHT) || IsKeyPressed(KEY_NSPIRE_6) ) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Right);
    }
-   else if( IsKeyPressed(KEY_NSPIRE_UP) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
+   else if( ( IsKeyPressed(KEY_NSPIRE_UP) || IsKeyPressed(KEY_NSPIRE_8) ) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Up);
    }
-   else if( IsKeyPressed(KEY_NSPIRE_DOWN) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
+   else if( ( IsKeyPressed(KEY_NSPIRE_DOWN) || IsKeyPressed(KEY_NSPIRE_2) ) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       SelectorMove(pGame->m_pSelector, Sel_Down);
    }
@@ -272,7 +272,7 @@ int GameLoop(struct Game* pGame)
 
       }
    }
-   else if( IsKeyPressed(KEY_NSPIRE_SHIFT) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
+   else if( ( IsKeyPressed(KEY_NSPIRE_SHIFT) || IsKeyPressed(KEY_NSPIRE_ENTER) ) && pGame->m_bWon != SQUARELIB_GAMEOVER ) {
       wait_no_key_pressed();
       IsSquareDestroyed(pGame->m_Square, nSelectionX, nSelectionY, &nDestroyed);
       if( nDestroyed == SQUARELIB_NOT_DESTROYED ) {
