@@ -110,6 +110,65 @@ void DrawMistakes(int nMistakes, Gc* pgc, int nX)
    }
 }
 
+void DrawMessage(struct Game* pGame)
+{
+   char message[256] = {0};
+   strcpy(message, GetSquareMessage(pGame->m_Square));
+   int nLength = strlen(message);
+
+   int nLeft = MetricsGetLeft(pGame->m_pMetrics);
+
+   int nStart = 0;
+   int nLine = 0;
+
+   const int nLeftIndent = 3;
+   const int nSpaceAvailable = nLeft - nLeftIndent - 3/*little extra*/;
+   while(1) {
+      const int maxLine = 32;
+      char buff[32] = {0};
+      char buffer[64];
+
+      //If starts with space skip it :)
+      while( *(message + nStart) == ' ' )
+         nStart++;
+   
+      int nRemainingCharacters = nLength - nStart;
+      int nCharactersDraw = nRemainingCharacters > maxLine ? maxLine : nRemainingCharacters;
+      if( nCharactersDraw <= 0 )
+         break;
+
+      int i=1;
+      int nChars = 1;
+      for(; i<=nCharactersDraw; i++) {
+         nChars = i;
+         memcpy( buff, message + nStart, i);
+
+         ascii2utf16(buffer, buff, 2*maxLine);
+
+         //Make new lines
+         if( buff[i-1] == '\r' || buff[i-1] == '\n' ) {
+            buffer[2*(i-1)] = '\0';
+            break;
+         }
+
+         int nWidthSpaceDesired = gui_gc_getStringWidth(pGame->m_gc, gui_gc_getFont(pGame->m_gc), buffer, 0, i);
+         if( nWidthSpaceDesired >= nSpaceAvailable )
+            break;
+
+         //If space and close to end break now
+         if( buff[i-1]==' ' && (nWidthSpaceDesired + 25)>nSpaceAvailable ) {
+            buffer[2*(i-1)] = '\0';
+            break;
+         }
+      }
+
+      //gui_gc_setColorRGB(pGame->m_gc, 0, 0, 0);
+      gui_gc_drawString(pGame->m_gc, buffer, nLeftIndent, 40 + nLine * 11, GC_SM_TOP);
+      nLine++;
+      nStart += nChars;
+   }
+}
+
 void DrawBoard(struct Game* pGame)
 {
    DrawBackground(pGame->m_pBackground, &pGame->m_gc);
@@ -164,6 +223,9 @@ void DrawBoard(struct Game* pGame)
 
    //Draw mistakes
    DrawMistakes(GetSquareMistakes(pGame->m_Square), &pGame->m_gc, nLeft);
+
+   //Draw message
+   DrawMessage(pGame);
 
    if( pGame->m_bWon == SQUARELIB_GAMEOVER ) {
       DrawWin(pGame);

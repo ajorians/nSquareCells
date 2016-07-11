@@ -69,5 +69,6 @@ int GetSquareIndicatorTypeCol(SquareLib api, int nIndex, enum IndicatorType* pIn
 int GetSpotNumber(SquareLib api, int nX, int nY, int* pnValue);
 int IsSpotNumberMet(SquareLib api, int nX, int nY);
 int GetSquareContinousMarkedCount(SquareLib api, int nX, int nY);
+char* GetSquareMessage(SquareLib api);
 
 #endif

@@ -33,6 +33,7 @@ struct SquareBoard
    struct Cell* m_pItems;
    enum IndicatorType* m_pTop;
    enum IndicatorType* m_pLeft;
+   char Message[512];
 };
 
 struct Cell* GetAt(struct SquareBoard* pBoard, int nX, int nY)
@@ -119,6 +120,8 @@ int SquareLibCreate(SquareLib* api, const char* pstrFile)
    char buffer[16];
    int nSpotInBuffer = 0;
 
+   int nSpotInMessage = 0;
+
    int nRemaining = -1, nWidth = -1, nHeight = -1;
    int nX = -1, nY = -1, nIsBomb = -1;
    int nIndicatorSpots = 0;
@@ -128,6 +131,16 @@ int SquareLibCreate(SquareLib* api, const char* pstrFile)
          buffer[nSpotInBuffer++] = ch;
       }
       else {
+         if( ch == '\"' ) {
+           while(pstr != '\0') {
+              ch = *pstr; pstr++;
+              if( ch == '\"' || ch == '\0' )
+                 break;
+              pS->m_pBoard->Message[nSpotInMessage++] = ch;
+           }
+           pS->m_pBoard->Message[nSpotInMessage] = '\0';
+           break;
+         }
          if( !isspace(ch) )
             break;
          buffer[nSpotInBuffer] = '\0';
@@ -1000,7 +1013,15 @@ int GetSquareContinousMarkedCount(SquareLib api, int nX, int nY)
    return nCount;
 }
 
+char* GetSquareMessage(SquareLib api)
+{
+   struct SquareCells* pS;
+   DEBUG_FUNC_NAME;
 
+   pS = (struct SquareCells*)api;
+
+   return &(pS->m_pBoard->Message);
+}
 
 
 

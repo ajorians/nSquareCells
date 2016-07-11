@@ -3,7 +3,7 @@
 
 //Indicator Types: 0=NoNumber, 1=Sequential, 2=FullNumbers
 //Format SquareCells Version1 Width Height TopIndicatorTypeNumbers LeftIndicatorTypeNumbers X Y IsBomb Value "Summary"
-#define LEVEL_1  "SquareCells 1 4 4 1 1 0 0 1 1 1 1 1 0 1 0 1 1 1 0 1 2 1 0 1 3 1 0 2 3 1 0 3 3 1 0 \"Reveal the pattern by removing squares from the grid\rNumbers on the outside of the grid show how many squares in that row/column are part of the pattern\rCtrl to remove an empty, Shift to mark it as part of the pattern\""
+#define LEVEL_1  "SquareCells 1 4 4 1 1 0 0 1 1 1 1 1 0 1 0 1 1 1 0 1 2 1 0 1 3 1 0 2 3 1 0 3 3 1 0 \"Reveal the pattern by removing squares from the grid\n\nNumbers on the outside of the grid show how many squares in that row/column are part of the pattern\n\nCtrl to remove an empty, Shift to mark it as part of the pattern\""
 
 #define LEVEL_2  "SquareCells 1 4 4 1 1 1 1 1 1 1 0 3 0 1 0 1 1 1 0 2 1 1 0 3 1 1 0 0 2 1 0 1 2 1 0 2 2 1 0 3 2 1 0 3 3 1 0 \"\""
 
@@ -73,7 +73,7 @@
 
 #define LEVEL_35 "SquareCells 1 12 12 1 2 2 2 2 2 2 0 2 0 0 1 1 1 2 1 2 1 0 1 2 2 1 1 0 0 1 0 3 0 1 0 4 0 1 0 5 0 1 0 6 0 1 0 7 0 1 0 8 0 1 0 9 0 1 0 11 0 1 0 1 1 1 0 2 1 1 0 1 2 1 3 3 2 1 3 5 2 1 3 6 2 1 0 7 2 1 3 0 3 1 0 2 3 1 0 3 3 1 0 9 3 1 0 10 3 1 0 11 3 1 0 0 4 1 2 4 4 1 2 5 4 1 0 7 4 1 2 8 4 1 0 11 5 1 0 0 6 1 0 1 6 1 4 2 6 1 0 4 6 1 0 5 6 1 4 6 6 1 0 7 6 1 0 9 6 1 4 10 6 1 0 11 6 1 0 0 7 1 0 2 8 1 0 3 8 1 2 7 8 1 2 10 8 1 2 7 9 1 0 10 9 1 0 0 10 1 0 1 10 1 0 4 10 1 0 5 10 1 0 8 10 1 0 9 10 1 0 2 11 1 0 3 11 1 0 6 11 1 0 7 11 1 0 10 11 1 0 11 11 1 0 \"\""
 
-#define LEVEL_36 "SquareCells 1 12 12 1 1 1 0 1 0 1 1 1 1 1 1 2 1 0 1 2 1 1 1 2 0 1 2 0 0 1 0 1 0 1 4 2 0 1 0 4 0 1 4 5 0 1 0 6 0 1 0 8 0 1 0 9 0 1 0 10 0 1 4 1 1 1 0 5 1 1 0 9 1 1 0 0 3 1 0 1 3 1 0 2 3 1 0 4 3 1 0 6 3 1 0 11 3 1 0 0 4 1 0 4 4 1 0 6 4 1 0 7 4 1 0 11 4 1 0 0 5 1 0 1 5 1 9 4 5 1 6 6 5 1 7 8 5 1 0 11 5 1 7 0 6 1 0 4 6 1 0 6 6 1 0 9 6 1 1 11 6 1 0 0 7 1 0 4 7 1 0 6 7 1 0 10 7 1 0 11 7 1 0 0 8 1 0 4 8 1 0 6 8 1 0 11 8 1 0 3 10 1 0 7 10 1 0 11 10 1 0 0 11 1 1 2 11 1 0 3 11 1 4 4 11 1 0 6 11 1 0 7 11 1 0 8 11 1 4 10 11 1 3 11 11 1 0 \"\""
+#define LEVEL_36 "SquareCells 1 12 12 1 1 1 0 1 0 1 1 1 1 1 1 2 1 0 1 2 1 1 1 2 0 1 2 0 0 1 0 1 0 1 4 2 0 1 0 4 0 1 4 5 0 1 0 6 0 1 0 8 0 1 0 9 0 1 0 10 0 1 4 1 1 1 0 5 1 1 0 9 1 1 0 0 3 1 0 1 3 1 0 2 3 1 0 4 3 1 0 6 3 1 0 11 3 1 0 0 4 1 0 4 4 1 0 6 4 1 0 7 4 1 0 11 4 1 0 0 5 1 0 1 5 1 9 4 5 1 6 6 5 1 7 8 5 1 0 11 5 1 7 0 6 1 0 4 6 1 0 6 6 1 0 9 6 1 1 11 6 1 0 0 7 1 0 4 7 1 0 6 7 1 0 10 7 1 0 11 7 1 0 0 8 1 0 4 8 1 0 6 8 1 0 11 8 1 0 3 10 1 0 7 10 1 0 11 10 1 0 0 11 1 1 2 11 1 0 3 11 1 4 4 11 1 0 6 11 1 0 7 11 1 0 8 11 1 4 10 11 1 3 11 11 1 0 \"Original game by\nMatthew Brown\""
 
 void LevelLoad(char* pstr, int nLevelNum);
 
